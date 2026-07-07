@@ -1,0 +1,27 @@
+Van den Berg et al. Dataset Structure
+=====================================
+
+Dataset DOI: 10.5061/dryad.rq80k
+Location: data/public_datasets/raw/vandenberg/
+
+Files:
+- Genotypes_26503SNPs.txt (33 MB): Genotype data with 26,503 SNPs
+- ID_Breed.txt (11 KB): Breed identifiers for samples
+
+Phenotype Data:
+Organized by genetic correlation (GenCor):
+- Phenotypes_GenCor_0.4/ (100 replicate files)
+- Phenotypes_GenCor_0.8/ (100 replicate files)  
+- Phenotypes_GenCor_1/ (100 replicate files)
+
+Each directory contains 100 replicate files:
+- Phenotypes_replicate_1.txt
+- Phenotypes_replicate_2.txt
+- ...
+- Phenotypes_replicate_100.txt
+
+Note: The QTL scenario information (3, 30, 300, 3000) may be encoded in the 
+replicate numbers or file contents. Further investigation needed to map 
+replicates to QTL scenarios.
+
+Total files: 1 genotype + 1 ID + 300 phenotype replicates = 302 files

@@ -1,0 +1,17 @@
+name: genomic_pred_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - xgboost
+  - lightgbm
+  - pip
+  - pip:
+    - tensorflow
+    - gpflow

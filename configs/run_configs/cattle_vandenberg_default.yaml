@@ -1,0 +1,69 @@
+# POC run config: Van den Berg cattle dataset (QTL300, rg=0.8, replicate 1)
+# Entry point: genotype-level (processed CSV), not FASTQ.
+
+species: cattle
+breeding_goal: growth
+input_type: genotype
+
+dataset:
+  source: vandenberg_QTL300_rg8
+  geno_file: dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv
+  pheno_file: dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv
+  pedigree_file: ""
+  metadata_file: ""
+
+mode: default_plus_rnd
+
+qc:
+  min_sample_callrate: 0.95
+  min_snp_callrate: 0.98
+  min_maf: 0.01
+  min_variance: 0.0001
+  enable_hwe: false
+  hwe_p: 1.0e-6
+
+imputation:
+  enabled: false
+
+grm:
+  method: vanRaden
+
+cv:
+  n_folds: 5
+  test_size: 0.20
+  val_size: 0.20
+  random_state: 42
+
+models:
+  default:
+    - GBLUP
+  ssgblup_if_pedigree: true
+  rnd:
+    - GBLUP_Ridge
+    - LASSO
+    - ElasticNet
+    - BayesianRidge
+    - RandomForest
+    - SVR_RBF
+    - NeuralNet_MLP
+    - BayesA
+    - BayesB
+    - BayesCpi
+    - XGBoost
+    - LightGBM
+
+ensemble:
+  simple_average: true
+  median: true
+  weighted_average: true
+  stacking_nonneg_ridge: true
+  stack_outer_splits: 5
+  stack_inner_splits: 3
+  stack_alpha: 1.0
+
+slurm:
+  partition: batch
+  account: YOUR_SLURM_ACCOUNT
+  mem: 64G
+  cpus_per_task: 32
+  time: "14-00:00:00"

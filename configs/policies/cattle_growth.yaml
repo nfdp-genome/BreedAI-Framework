@@ -1,0 +1,32 @@
+reference_build: "ARS-UCD1.2"
+
+step4:
+  min_sample_callrate: 0.95
+  min_snp_callrate: 0.98
+  min_maf: 0.01
+  enable_hwe: false
+  het_outlier_method: MAD
+  het_outlier_thresh: 3.5
+
+step5:
+  enabled: true
+  method: beagle
+
+modeling:
+  default_model: gblup
+  enable_ssgblup_if_pedigree: true
+  cv_mode_default: forward_time
+  rnd_enabled_by_default: false
+
+rnd:
+  models:
+    - GBLUP_Ridge
+    - GBLUP_RidgeCV
+    - LASSO
+    - LASSO_CV
+    - ElasticNet
+    - ElasticNet_CV
+    - BayesianRidge
+    - RandomForest
+    - SVR_RBF
+    - SVR_Linear

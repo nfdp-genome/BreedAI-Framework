@@ -1,0 +1,128 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Data
+data/
+# Ignore all CSV files in dataset folder
+dataset/**/*.csv
+
+# Results folder (removed - using array folders instead)
+results/
+
+# Log files
+logs/
+*.log
+*.out
+*.err
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Large files
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.parquet
+*.feather
+*.zip
+*.tar
+*.tar.gz
+*.gz
+*.bz2
+*.7z
+*.rar
+# Model files (very large - 2.6GB each)
+*.joblib
+*.model
+*.sav
+
+# Array folders - track .csv, ignore logs and other files
+# Benchmarking array: track .csv files
+benchmarking_array/*.log
+benchmarking_array/*.pkl
+benchmarking_array/*.sh
+benchmarking_array/job_*.pkl
+benchmarking_array/shared_data_*.pkl
+# Explicitly track CSV files
+!benchmarking_array/*.csv
+
+# Deployment array: ignore everything including models (models are too large for git)
+# Models should be generated locally, not committed to repository
+deployment_array/*.log
+deployment_array/*.pkl
+deployment_array/*.sh
+deployment_array/*.json
+deployment_array/job_*.pkl
+deployment_array/shared_data_*.pkl
+deployment_array/validation/
+deployment_array/predictions/
+deployment_array/models/
+# Only track CSV summary files
+!deployment_array/*.csv
+
+# Prediction array: track .csv files, ignore logs
+prediction_array/*.log
+prediction_array/*.pkl
+prediction_array/*.sh
+prediction_array/job_*.pkl
+prediction_array/shared_data_*.pkl
+prediction_array/pred_results_*.pkl
+# Explicitly track CSV files (prediction results)
+!prediction_array/*.csv
+
+# Phase 2 Deployment Prediction - ignore large model and result files
+# Models are extremely large (2.6GB each) and should not be committed
+Phase2_Deployment_Prediction/deployment/models/
+Phase2_Deployment_Prediction/deployment/*.pkl
+Phase2_Deployment_Prediction/deployment/shared_data_*.pkl
+Phase2_Deployment_Prediction/prediction/*.pkl
+Phase2_Deployment_Prediction/prediction/job_*.pkl
+Phase2_Deployment_Prediction/prediction/pred_results_*.pkl
+Phase2_Deployment_Prediction/prediction/shared_data_*.pkl
+# Track CSV prediction results and notebooks
+!Phase2_Deployment_Prediction/prediction/*.csv
+!Phase2_Deployment_Prediction/notebooks/
+# Keep large sheep spreadsheets local
+dataset/public_datasets/sheep/GSE152717/*.xlsx
+
+# Large generated artifacts (keep local, not in git)
+Phase1_Learning_Benchmarking/core_dataset/*.csv
+Phase1_Learning_Benchmarking/core_dataset/*.npy
+Phase1_Learning_Benchmarking/core_dataset/gmatrix/
+Phase1_Learning_Benchmarking/training_validation/default_track/gebv/*.csv
+*.npy
+*.npz
+*.vcf
+*.vcf.gz
+*.tbi
+*.tar
+runs/
+plans/
+dataset/public_datasets/goat/GSE145419/
+dataset/public_datasets/sheep/GSE152717/*.tar
+dataset/public_datasets/sheep/GSE152717/*.gz
+dataset/public_datasets/sheep/GSE152717/*.html*
+dataset/public_datasets/goat/GSE145419/*.tar
+dataset/public_datasets/goat/GSE145419/*.gz
+dataset/public_datasets/goat/GSE145419/*.html*
