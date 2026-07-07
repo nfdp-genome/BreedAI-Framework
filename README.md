@@ -11,7 +11,8 @@ Alshehri, Hend Alotaibi, Nouf F. Alharbi, Shahad A. Alsalman, Hatim Almutairi
 *National Livestock and Fisheries Development Program (NLFDP), Ministry of
 Environment, Water and Agriculture (MEWA), Kingdom of Saudi Arabia.*
 
-📄 **Poster (ISMB 2026):** [`poster/BreedAI_poster_ISMB_2026_final.pdf`](poster/BreedAI_poster_ISMB_2026_final.pdf)
+📄 **Poster (ISMB 2026):** [`poster/BreedAI_poster_ISMB_2026.pdf`](poster/BreedAI_poster_ISMB_2026.pdf)
+📖 **User Guide:** [`USER_GUIDE.md`](USER_GUIDE.md)
 
 > This repository is the **public companion to the ISMB 2026 poster** — the
 > proof-of-concept version of BreedAI benchmarked on a public simulated cattle
@@ -68,6 +69,7 @@ RMSE, MAE, bias) are reported per model in machine-readable CSV/JSON.
 # 1. Environment (conda)
 conda env create -f environment.yml      # creates the `genomic_pred` env
 conda activate genomic_pred
+#    …or, without conda:  pip install -r requirements.txt
 
 # 2. Get the data — Van den Berg et al. (2020), Dryad DOI: 10.5061/dryad.rq80k
 #    See dataset/public_datasets/cattle/vandenberg/README.md for details, then
@@ -77,16 +79,22 @@ python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # see script
 # 3. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits)
 #    Locally or on SLURM/HPC via the menu:
 bash scripts/start_menu.sh
-#    …or directly with the provided config:
-#    configs/run_configs/cattle_vandenberg_default.yaml
 ```
 
 Per-model accuracy tables and figures are written under the run's results folder
-(CSV/JSON). See [`docs/user_guide/getting_started.md`](docs/user_guide/getting_started.md).
+(CSV/JSON). See the [`USER_GUIDE.md`](USER_GUIDE.md).
 
 > **HPC note:** the SLURM scripts read the conda env name from `genomic_pred` and
 > auto-detect the conda base (`conda info --base`); set your own SLURM account
 > (`YOUR_SLURM_ACCOUNT` placeholder in the configs) before submitting.
+
+---
+
+## Documentation
+
+See the **[`USER_GUIDE.md`](USER_GUIDE.md)** for prerequisites, menu options, the two
+tracks, the algorithm list, output locations, and troubleshooting. Method details and
+the full write-up live in the poster (and, later, the paper).
 
 ---
 

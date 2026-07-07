@@ -332,9 +332,9 @@ test_setup() {
   echo
   echo "Checking key scripts..."
   for f in \
-    "${SCRIPT_DIR}/07_run_poc.py" \
-    "${SCRIPT_DIR}/08_deploy_default_track.py" \
-    "${SCRIPT_DIR}/09_test_new_animal_prediction.py"
+    "${SCRIPT_DIR}/02_phase1_train_validate.sh" \
+    "${SCRIPT_DIR}/02a_phase1_train_validate_array.py" \
+    "${SCRIPT_DIR}/05_phase2_predict_unified.sh"
   do
     if [[ -f "${f}" ]]; then
       echo "  OK  ${f}"

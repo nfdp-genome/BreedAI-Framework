@@ -84,11 +84,9 @@ Combined with genetic correlations (0.4, 0.8, 1.0), this gives 12 distinct scena
 dataset/public_datasets/cattle/
 ├── raw/
 │   └── vandenberg/
-│       ├── Genotypes_26503SNPs.txt          # Genotype data (33 MB) — same for all scenarios
+│       ├── Genotypes_26503SNPs.txt          # Genotype data (33 MB)
 │       ├── ID_Breed.txt                     # Breed identifiers
-│       ├── Phenotypes_GenCor_0.4/           # r_g = 0.4 (replicates 1-100)
-│       ├── Phenotypes_GenCor_0.8/           # r_g = 0.8 (replicates 1-100)
-│       └── Phenotypes_GenCor_1/             # r_g = 1.0 (replicates 1-100)
+│       └── Phenotypes_GenCor_0.8/           # r_g = 0.8, the poster scenario (replicates 1-100)
 │
 ├── processed/
 │   └── vandenberg_QTL300_rg8/              # Reference scenario
@@ -131,30 +129,6 @@ python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py \
     --pheno-file dataset/public_datasets/cattle/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \
     --output-dir dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8 \
     --output-suffix _QTL300_rg8
-```
-
-### Step 2b (Optional): Prepare VCF for Nextflow Genotype QC
-
-> **This step is only needed for real-world sequencing data (VCF).** For the Van den Berg simulated dataset, skip this — the data is already clean.
-
-If starting from raw VCF files, use the Nextflow genotype QC pipeline (`pipelines/step4_genotype_qc_grm_ready/main.nf`) to perform standard bioinformatics QC (call-rate filtering, MAF, HWE, heterozygosity outliers, PCA, relatedness). See the pipeline's own `README.md` for details.
-
-```bash
-# Prepare inputs for the Nextflow pipeline
-python scripts/public_dataset/vandenberg/03_prepare_step4_inputs.py \
-    --genotypes_txt dataset/public_datasets/cattle/raw/vandenberg/Genotypes_26503SNPs.txt \
-    --phenotypes_txt dataset/public_datasets/cattle/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \
-    --id_breed_txt dataset/public_datasets/cattle/raw/vandenberg/ID_Breed.txt \
-    --outdir dataset/public_datasets/cattle/processed/vandenberg_step4_ready/replicate_1 \
-    --write_vcf
-
-# Run Nextflow QC pipeline
-nextflow run pipelines/step4_genotype_qc_grm_ready/main.nf \
-  -profile test \
-  --vcf dataset/public_datasets/cattle/processed/vandenberg_step4_ready/replicate_1/step4_input/cohort.filtered_snps.vcf.gz \
-  --metadata dataset/public_datasets/cattle/processed/vandenberg_step4_ready/replicate_1/metadata.csv \
-  --outdir runs/step4_vandenberg/step4 \
-  --report_dir runs/step4_vandenberg/reports
 ```
 
 ### Step 3: Run BreedAI
@@ -345,7 +319,6 @@ results/validation/
 ### Data Preparation
 - `scripts/public_dataset/vandenberg/01_download_vandenberg.py` — Download from Dryad
 - `scripts/public_dataset/vandenberg/02_prepare_vandenberg.py` — Convert to BreedAI format (Geno.csv, Pheno.csv)
-- `scripts/public_dataset/vandenberg/03_prepare_step4_inputs.py` — Prepare VCF for Nextflow QC (optional)
 
 ### Validation *(planned)*
 - `scripts/validation/validate_predictions.py` — Run full validation pipeline

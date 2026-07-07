@@ -1,4 +1,4 @@
-name: genomic_pred_env
+name: genomic_pred
 channels:
   - conda-forge
   - defaults
@@ -7,10 +7,13 @@ dependencies:
   - numpy
   - pandas
   - scikit-learn
+  - scipy
   - matplotlib
   - seaborn
   - xgboost
   - lightgbm
+  - pyyaml
+  - joblib
   - pip
   - pip:
     - tensorflow

@@ -9,10 +9,10 @@ Files:
 - ID_Breed.txt (11 KB): Breed identifiers for samples
 
 Phenotype Data:
-Organized by genetic correlation (GenCor):
-- Phenotypes_GenCor_0.4/ (100 replicate files)
-- Phenotypes_GenCor_0.8/ (100 replicate files)  
-- Phenotypes_GenCor_1/ (100 replicate files)
+Organized by genetic correlation (GenCor). This repo ships the r_g = 0.8
+scenario used by the poster; the r_g = 0.4 and 1.0 scenarios are available
+from the same Dryad source (DOI: 10.5061/dryad.rq80k).
+- Phenotypes_GenCor_0.8/ (100 replicate files)
 
 Each directory contains 100 replicate files:
 - Phenotypes_replicate_1.txt

@@ -14,12 +14,12 @@ BreedAI Phase 1 reads **your active analysis files** from this directory.
 | File | Description |
 |------|-------------|
 | `metadata.csv` | Sample covariates (breed, herd, sex, …) when available; used when the pipeline supports fixed-effect expansion. |
-| `pedigree.csv` | Pedigree for ssGBLUP / H-matrix when available (format as expected by `scripts/stages/s08_h_matrix.py`). |
+| `pedigree.csv` | Pedigree for ssGBLUP / H-matrix when available (standard `animal, sire, dam` format). |
 
 ## Workflow
 
 1. Copy or symlink prepared `Geno.csv` / `Pheno.csv` here (see `dataset/public_datasets/` for benchmark examples).
-2. Run Phase 1 from `scripts/start_menu.sh` or `python scripts/07_run_poc.py`.
+2. Run Phase 1 from `scripts/start_menu.sh`.
 3. Outputs are written under `Phase1_Learning_Benchmarking/` (see top-level `README.md`).
 
 **Note:** Files in `dataset/public_datasets/` are **reference benchmarks**; they are not read automatically. You copy the scenario you want into `dataset/input/`.

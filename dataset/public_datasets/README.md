@@ -78,7 +78,7 @@ dataset/public_datasets/cattle/
 │   └── vandenberg/
 │       ├── Genotypes_26503SNPs.txt
 │       ├── ID_Breed.txt
-│       └── Phenotypes_GenCor_0.4|0.8|1.0/
+│       └── Phenotypes_GenCor_0.8/
 │           └── Phenotypes_replicate_*.txt
 └── processed/
     └── vandenberg_QTL300_rg8/

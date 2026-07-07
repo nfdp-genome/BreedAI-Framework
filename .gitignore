@@ -119,6 +119,9 @@ Phase1_Learning_Benchmarking/training_validation/default_track/gebv/*.csv
 *.tar
 runs/
 plans/
+# test artifacts written into the repo root by tests/test_planner_routing.py
+tmp_test_plan/
+tmp_test_plan_rnd/
 dataset/public_datasets/goat/GSE145419/
 dataset/public_datasets/sheep/GSE152717/*.tar
 dataset/public_datasets/sheep/GSE152717/*.gz
@@ -126,3 +129,10 @@ dataset/public_datasets/sheep/GSE152717/*.html*
 dataset/public_datasets/goat/GSE145419/*.tar
 dataset/public_datasets/goat/GSE145419/*.gz
 dataset/public_datasets/goat/GSE145419/*.html*
+.pytest_cache/
+
+# BGLR scratch outputs
+scripts/*.dat
+ETA_*.dat
+mu.dat
+varE.dat

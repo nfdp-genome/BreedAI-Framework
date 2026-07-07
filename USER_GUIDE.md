@@ -51,9 +51,9 @@ See `dataset/public_datasets/cattle/README.md` for details.
 | Type | Description | Status |
 |------|-------------|--------|
 | **genotype** | Geno.csv + Pheno.csv (0/1/2 matrix) | **Working** |
-| **vcf** | VCF file + phenotypes | Via Nextflow step4 pipeline |
-| **plink** | PLINK .bed/.bim/.fam or .pgen/.pvar/.psam | Supported via step4 |
-| **fastq** | Raw sequencing reads (.fastq.gz) | Scaffold only (not validated) |
+
+> The public companion repo starts from genotypes. VCF / PLINK / FASTQ entry
+> (upstream sequencing → VCF QC) is out of scope here.
 
 ---
 
@@ -174,29 +174,25 @@ BreedAI-Framework/
 │   ├── 03a_phase2_deploy_array.py    Phase 2 deployment
 │   ├── 04a_phase2_predict_array.py   Phase 2 prediction
 │   ├── 05_phase2_predict_unified.sh  Phase 2 unified pipeline
-│   ├── models/                       Shared model implementations
-│   ├── stages/                       Pipeline stage modules (s01–s13)
 │   ├── ensembles/                    Stacking, non-negative ridge
 │   └── public_dataset/vandenberg/    Dataset adapters and converters
-├── configs/                          Run configs and policies
-├── docs/                             Documentation (this folder)
 ├── logs/                             SLURM job logs
-├── pipelines/                        Nextflow pipelines (step4 QC implemented; others scaffolds)
-├── src/                              Python orchestration package
-├── tests/                            Automated tests
-├── containers/                       Docker/Singularity definitions
-└── images/                           Logo and figures
+├── USER_GUIDE.md                     This guide
+└── README.md                         Project overview + reproduction steps
 ```
 
 ---
 
 ## Pipeline Stages
 
+Stages 1–3 (raw sequencing → VCF) are **upstream and out of scope** for this public
+companion repo; BreedAI starts from genotypes (stage 4 onward).
+
 | # | Stage | Status |
 |---|-------|--------|
-| 1 | FASTQ QC | Scaffold |
-| 2 | Alignment | Scaffold |
-| 3 | Joint SNP calling | Scaffold |
+| 1 | FASTQ QC | Upstream — out of scope |
+| 2 | Alignment | Upstream — out of scope |
+| 3 | Joint SNP calling | Upstream — out of scope |
 | 4 | Sample / SNP QC | **Implemented** |
 | 5 | Imputation | Mean-fill working; Beagle optional |
 | 6 | Genotype matrix | **Implemented** |
@@ -237,4 +233,4 @@ Customizable when prompted by the menu.
 
 ---
 
-*Last updated: 2026-03-30*
+*Last updated: 2026-07-07*

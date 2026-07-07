@@ -141,5 +141,5 @@ When adding a new public dataset:
    ```
 
 4. **Run validation pipeline:**
-   Use `scripts/01_pipeline_run_all.sh` Option 4, which automatically detects and uses the splits.
+   Use `scripts/start_menu.sh` (Phase 1), which automatically detects and uses the splits.
 

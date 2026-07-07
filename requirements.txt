@@ -9,5 +9,4 @@ xgboost
 lightgbm
 tensorflow
 gpflow
-pydantic
 pyyaml
