@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-- Access to Ibex (KAUST HPC)
-- Conda environment `genomic_pred`
-- Project directory: `<PROJECT_DIR>/`
+- Access to an HPC cluster with a SLURM scheduler
+- Conda environment `genomic_pred` (`conda env create -f environment.yml`)
+- This repository cloned into your project directory
 
 ---
 
@@ -34,26 +34,30 @@ Menu options:
 
 ## Input Data
 
-Phase 1 expects **`dataset/input/Geno.csv`** and **`dataset/input/Pheno.csv`**.
+Phase 1 reads two files from `dataset/input/`:
 
-For the public cattle benchmark:
+| File | What it is |
+|------|-----------|
+| **`Geno.csv`** — genotypes | The SNP marker matrix: one row per animal, one column per SNP, coded **0 / 1 / 2** (number of copies of the alternate allele). This is the genomic data the models learn from. |
+| **`Pheno.csv`** — phenotypes | The observed trait values: one row per animal, one column per trait (e.g. milk yield, growth). These are the targets the models are trained to predict and are evaluated against. |
+
+The two files are matched by animal ID.
+
+For the public cattle benchmark, first build the processed files from the raw
+data, then copy them in:
 
 ```bash
 # From repository root
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # builds Geno_QTL300_rg8.csv / Pheno_QTL300_rg8.csv
+
 cp dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv dataset/input/Geno.csv
 cp dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv dataset/input/Pheno.csv
 ```
 
 See `dataset/public_datasets/cattle/README.md` for details.
 
-### Supported Input Types
-
-| Type | Description | Status |
-|------|-------------|--------|
-| **genotype** | Geno.csv + Pheno.csv (0/1/2 matrix) | **Working** |
-
-> The public companion repo starts from genotypes. VCF / PLINK / FASTQ entry
-> (upstream sequencing → VCF QC) is out of scope here.
+> **Scope:** this public companion repo starts from genotypes. VCF / PLINK / FASTQ
+> entry (upstream sequencing → VCF QC) is out of scope here.
 
 ---
 
@@ -180,29 +184,6 @@ BreedAI-Framework/
 ├── USER_GUIDE.md                     This guide
 └── README.md                         Project overview + reproduction steps
 ```
-
----
-
-## Pipeline Stages
-
-Stages 1–3 (raw sequencing → VCF) are **upstream and out of scope** for this public
-companion repo; BreedAI starts from genotypes (stage 4 onward).
-
-| # | Stage | Status |
-|---|-------|--------|
-| 1 | FASTQ QC | Upstream — out of scope |
-| 2 | Alignment | Upstream — out of scope |
-| 3 | Joint SNP calling | Upstream — out of scope |
-| 4 | Sample / SNP QC | **Implemented** |
-| 5 | Imputation | Mean-fill working; Beagle optional |
-| 6 | Genotype matrix | **Implemented** |
-| 7 | GRM (VanRaden G-matrix) | **Implemented** |
-| 8 | H-matrix / ssGBLUP | Implemented (skips if no pedigree) |
-| 9 | Fixed effects | Implemented (intercept-only for POC) |
-| 10 | Default GBLUP | **Implemented** |
-| 11 | GEBV + reliability | **Implemented** |
-| 12 | Selection index | Implemented (needs economic weights) |
-| 13 | Monitoring / drift | Implemented (needs baseline run) |
 
 ---
 

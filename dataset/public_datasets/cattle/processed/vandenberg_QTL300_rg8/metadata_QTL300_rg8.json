@@ -9,6 +9,6 @@
     "Trait_4"
   ],
   "source": "Van den Berg et al. (Dryad DOI: 10.5061/dryad.rq80k)",
-  "genotype_file": "/ibex/user/x_tayyasn/Dev/BreedAI-releases/poster/dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv",
-  "phenotype_file": "/ibex/user/x_tayyasn/Dev/BreedAI-releases/poster/dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv"
+  "genotype_file": "dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv",
+  "phenotype_file": "dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv"
 }
