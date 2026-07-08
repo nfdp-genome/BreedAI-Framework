@@ -45,10 +45,11 @@ across genetic architectures:
   (`Phenotypes_GenCor_0.8/`); the r_g = 0.4 and 1.0 sets are available from the
   same Dryad record.
 
-**Poster reference scenario — `vandenberg_QTL300_rg8`:** built from the r_g = 0.8
-phenotypes, replicate 1. After BreedAI's Phase-1 QC this yields **1,285 animals ×
-26,479 SNPs**, split 771 / 257 / 257 (60 / 20 / 20). Fixed effects are
-intercept-only for this proof of concept.
+**Poster reference scenario — `vandenberg_QTL300_rg8`:** the **300-QTL**
+architecture (a moderately polygenic trait) at genetic correlation **r_g = 0.8**,
+replicate 1. After BreedAI's Phase-1 QC this yields **1,285 animals × 26,479
+SNPs**, split 771 / 257 / 257 (60 / 20 / 20). Fixed effects are intercept-only
+for this proof of concept.
 
 ---
 
