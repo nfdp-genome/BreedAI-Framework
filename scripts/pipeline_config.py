@@ -122,15 +122,15 @@ def build_config_from_dataset_input(
 ) -> dict:
     """
     Build a run config that reads genotype/phenotype from the standard runtime folder:
-      <project_root>/cattle_dataset/input/Geno.csv
-      <project_root>/cattle_dataset/input/Pheno.csv
+      <project_root>/input/Geno.csv
+      <project_root>/input/Pheno.csv
 
     Optional files (used when present):
-      cattle_dataset/input/metadata.csv
-      cattle_dataset/input/pedigree.csv
+      input/metadata.csv
+      input/pedigree.csv
     """
     root = project_root or PROJECT_ROOT
-    inp = root / "cattle_dataset" / "input"
+    inp = root / "input"
     geno = inp / "Geno.csv"
     pheno = inp / "Pheno.csv"
     missing = [str(p) for p in (geno, pheno) if not p.exists()]

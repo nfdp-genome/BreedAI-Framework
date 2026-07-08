@@ -18,8 +18,10 @@ dist/
 
 # Data
 data/
-# Ignore all CSV files in the dataset folder (processed + runtime inputs stay local)
+# Processed benchmark CSVs (rebuilt locally from the shipped raw data)
 cattle_dataset/**/*.csv
+# Runtime inputs — users drop their own Geno.csv / Pheno.csv here; keep them local
+input/*.csv
 
 # Results folder (removed - using array folders instead)
 results/

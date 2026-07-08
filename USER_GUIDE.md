@@ -38,27 +38,37 @@ Menu options:
 
 ## Input Data
 
-Phase 1 reads two files from `cattle_dataset/input/`:
+Phase 1 reads two files from `input/`:
 
 | File | What it is |
 |------|-----------|
 | **`Geno.csv`** — genotypes | The SNP marker matrix: one row per animal, one column per SNP, coded **0 / 1 / 2** (number of copies of the alternate allele). This is the genomic data the models learn from. |
 | **`Pheno.csv`** — phenotypes | The observed trait values: one row per animal, one column per trait (e.g. milk yield, growth). These are the targets the models are trained to predict and are evaluated against. |
 
-The two files are matched by animal ID.
+The two files are matched by animal ID. That is all BreedAI needs — drop your own
+cohort's `Geno.csv` / `Pheno.csv` into `input/` and run.
+
+### Reproducing the shipped cattle example
+
+The repo ships the public **Van den Berg** cattle benchmark under
+[`cattle_dataset/`](cattle_dataset/README.md). You don't use its files directly —
+you first generate the BreedAI-format `Geno.csv` / `Pheno.csv` from the raw data,
+then copy them into `input/`. The **[`cattle_dataset/README.md`](cattle_dataset/README.md)**
+has the full walkthrough (dataset description, the QTL300 / r_g = 0.8 scenario,
+and how to build other replicates).
 
 For the public cattle benchmark, first build the processed files from the raw
 data, then copy them in:
 
 ```bash
-# From repository root
-python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # builds Geno_QTL300_rg8.csv / Pheno_QTL300_rg8.csv
+# From the repository root — builds Geno_QTL300_rg8.csv / Pheno_QTL300_rg8.csv.
+# No arguments are needed: the defaults reproduce the poster scenario.
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py
 
-cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv cattle_dataset/input/Geno.csv
-cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv cattle_dataset/input/Pheno.csv
+# Copy the generated files into the runtime input folder:
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  input/Geno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv input/Pheno.csv
 ```
-
-See `cattle_dataset/README.md` for details.
 
 > **Scope:** this public companion repo starts from genotypes. VCF / PLINK / FASTQ
 > entry (upstream sequencing → VCF QC) is out of scope here.
@@ -169,9 +179,9 @@ bash 05_phase2_predict_unified.sh
 
 ```
 BreedAI-Framework/
-├── cattle_dataset/                   Benchmark data + your runtime inputs
-│   ├── input/                        ← Put Geno.csv + Pheno.csv here
-│   ├── raw/vandenberg/               Van den Berg raw data (as downloaded)
+├── input/                            ← Put Geno.csv + Pheno.csv here (any cohort)
+├── cattle_dataset/                   Shipped example dataset (Van den Berg cattle)
+│   ├── raw/vandenberg/               raw data (as downloaded)
 │   └── processed/                    BreedAI-format Geno/Pheno (rebuilt locally)
 ├── Phase1_Learning_Benchmarking/     Phase 1 outputs (QC, training, stacking)
 ├── Phase2_Deployment_Prediction/     Phase 2 outputs (deployment, prediction)

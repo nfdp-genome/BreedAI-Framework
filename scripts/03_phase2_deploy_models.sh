@@ -55,7 +55,7 @@ if [[ -z "$PROJECT_DIR" ]]; then
 fi
 
 SCRIPTS_DIR="$PROJECT_DIR/scripts"
-DATA_DIR="$PROJECT_DIR/cattle_dataset/input"
+DATA_DIR="$PROJECT_DIR/input"
 DEPLOYMENT_ARRAY_DIR="$PROJECT_DIR/Phase2_Deployment_Prediction/deployment"
 # Results saved directly in Phase2_Deployment_Prediction/deployment folder
 RESULTS_DIR="$DEPLOYMENT_ARRAY_DIR"

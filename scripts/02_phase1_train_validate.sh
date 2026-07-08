@@ -60,7 +60,7 @@ fi
 
 SCRIPTS_DIR="$PROJECT_DIR/scripts"
 DATA_DIR="$PROJECT_DIR/data"
-INPUT_DIR="$PROJECT_DIR/cattle_dataset/input"
+INPUT_DIR="$PROJECT_DIR/input"
 ARRAY_DIR="$PROJECT_DIR/Phase1_Learning_Benchmarking"
 # Create subdirectories for organization
 QC_DIR="$ARRAY_DIR/QC"
@@ -104,14 +104,14 @@ debug_log "H1" "02_phase1_train_validate.sh:86" "Env before data check" \
 mkdir -p $ARRAY_DIR $QC_DIR $TRAINING_DIR "$PROJECT_DIR/logs/train_validate"
 cd $SCRIPTS_DIR
 
-# Data files - check cattle_dataset/input/ first, then data/
+# Data files - check input/ first, then data/
 X_FILE=""
 Y_FILE=""
 
 if [[ -f "$INPUT_DIR/Geno.csv" ]] && [[ -f "$INPUT_DIR/Pheno.csv" ]]; then
     X_FILE="$INPUT_DIR/Geno.csv"
     Y_FILE="$INPUT_DIR/Pheno.csv"
-    echo "✓ Data files found in cattle_dataset/input/"
+    echo "✓ Data files found in input/"
 elif [[ -f "$DATA_DIR/Geno.csv" ]] && [[ -f "$DATA_DIR/Pheno.csv" ]]; then
     X_FILE="$DATA_DIR/Geno.csv"
     Y_FILE="$DATA_DIR/Pheno.csv"
@@ -122,7 +122,7 @@ else
     echo "  Checked: $DATA_DIR/Geno.csv"
     echo ""
     echo "Please ensure Geno.csv and Pheno.csv exist in:"
-    echo "  - cattle_dataset/input/ (preferred location)"
+    echo "  - input/ (preferred location)"
     echo "  - data/ (fallback)"
     exit 1
 fi

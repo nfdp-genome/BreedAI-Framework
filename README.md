@@ -63,7 +63,11 @@ RMSE, MAE, bias) are reported per model in machine-readable CSV/JSON.
 
 ---
 
-## Reproduce it
+## How to run
+
+BreedAI runs on **any** cohort — put your two input files in `input/` and launch
+the pipeline. Preprocessing and data splits are held constant across every model,
+so accuracy differences are interpretable and results are comparable.
 
 ```bash
 # 1. Environment (conda)
@@ -71,18 +75,20 @@ conda env create -f environment.yml      # creates the `genomic_pred` env
 conda activate genomic_pred
 #    …or, without conda:  pip install -r requirements.txt
 
-# 2. Get the data — Van den Berg et al. (2020), Dryad DOI: 10.5061/dryad.rq80k
-#    See cattle_dataset/README.md for details, then
-#    build the BreedAI Geno.csv / Pheno.csv:
-python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # see script header for args
+# 2. Provide your data — drop two files into input/ (matched by animal ID):
+#      input/Geno.csv     animals × SNPs, coded 0/1/2
+#      input/Pheno.csv    animals × traits
+#    Optional: input/metadata.csv (covariates), input/pedigree.csv (ssGBLUP)
 
-# 3. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits)
-#    Locally or on SLURM/HPC via the menu:
-bash scripts/start_menu.sh
+# 3. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits),
+#    locally or on SLURM/HPC via the interactive menu:
+cd scripts
+./start_menu.sh
 ```
 
 Per-model accuracy tables and figures are written under the run's results folder
-(CSV/JSON). See the [`USER_GUIDE.md`](USER_GUIDE.md).
+(CSV/JSON). See the [`USER_GUIDE.md`](USER_GUIDE.md) for input formats, menu
+options, and output locations.
 
 > **HPC note:** before submitting, set your SLURM account once —
 > `export SBATCH_ACCOUNT=<your-account>` (find it with
@@ -90,6 +96,27 @@ Per-model accuracy tables and figures are written under the run's results folder
 > natively, so it applies to every job; the menu also prompts for it. Leave it
 > unset to use your cluster's default account. The scripts use the conda env
 > `genomic_pred` and auto-detect the conda base (`conda info --base`).
+
+---
+
+## Reproduce the poster results
+
+The repo ships a worked example — the public **Van den Berg** simulated Holstein
+cattle dataset (Dryad DOI
+[10.5061/dryad.rq80k](https://datadryad.org/stash/dataset/doi:10.5061/dryad.rq80k)) —
+so you can reproduce the poster end to end. Build its `Geno.csv` / `Pheno.csv`
+from the shipped raw data and copy them into `input/`, then run as above:
+
+```bash
+# No arguments needed — the defaults reproduce the poster scenario (QTL300, r_g=0.8)
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py
+
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  input/Geno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv input/Pheno.csv
+```
+
+Full details — the dataset, the scenario, and how to build other replicates — are
+in [`cattle_dataset/README.md`](cattle_dataset/README.md).
 
 ---
 

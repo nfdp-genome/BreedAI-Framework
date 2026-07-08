@@ -377,8 +377,8 @@ if [[ $COMBINE_EXIT_CODE -eq 0 ]]; then
     echo "Generating Phase 2 EDA/QC report (preprocessing documentation)..."
     
     # Find dataset directory
-    if [[ -d "$PROJECT_DIR/cattle_dataset/input" ]]; then
-        DATASET_DIR="$PROJECT_DIR/cattle_dataset/input"
+    if [[ -d "$PROJECT_DIR/input" ]]; then
+        DATASET_DIR="$PROJECT_DIR/input"
     else
         DATASET_DIR="$PROJECT_DIR/data"
     fi

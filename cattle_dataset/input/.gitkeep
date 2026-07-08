@@ -1,3 +1,0 @@
-Runtime input folder — BreedAI reads Geno.csv / Pheno.csv from here.
-See ../README.md §3. This placeholder keeps the (otherwise empty) folder in git;
-your Geno.csv / Pheno.csv are gitignored.

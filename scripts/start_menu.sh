@@ -180,15 +180,15 @@ run_phase1() {
   echo "Train and benchmark models on a dataset."
   echo
   echo "Standard inputs must be present under:"
-  echo "  ${REPO_ROOT}/cattle_dataset/input/Geno.csv"
-  echo "  ${REPO_ROOT}/cattle_dataset/input/Pheno.csv"
+  echo "  ${REPO_ROOT}/input/Geno.csv"
+  echo "  ${REPO_ROOT}/input/Pheno.csv"
   echo
   echo "Copy benchmark files from cattle_dataset/processed/ when reproducing a public run"
   echo "(see cattle_dataset/README.md for the cattle benchmark)."
   echo
 
-  if [[ ! -f "${REPO_ROOT}/cattle_dataset/input/Geno.csv" ]] || [[ ! -f "${REPO_ROOT}/cattle_dataset/input/Pheno.csv" ]]; then
-    echo "ERROR: Geno.csv and/or Pheno.csv missing under ${REPO_ROOT}/cattle_dataset/input/"
+  if [[ ! -f "${REPO_ROOT}/input/Geno.csv" ]] || [[ ! -f "${REPO_ROOT}/input/Pheno.csv" ]]; then
+    echo "ERROR: Geno.csv and/or Pheno.csv missing under ${REPO_ROOT}/input/"
     echo "Add both files before running Phase 1."
     return
   fi
@@ -269,9 +269,9 @@ run_phase2() {
     return
   fi
 
-  read -r -p "Path to new animals genotype CSV file (Enter = use cattle_dataset/input/Geno.csv): " new_geno
+  read -r -p "Path to new animals genotype CSV file (Enter = use input/Geno.csv): " new_geno
   if [[ -z "${new_geno}" ]]; then
-    new_geno="${REPO_ROOT}/cattle_dataset/input/Geno.csv"
+    new_geno="${REPO_ROOT}/input/Geno.csv"
     echo "Using default: ${new_geno}"
   fi
 
@@ -357,7 +357,7 @@ test_setup() {
 
   echo
   echo "Expected job groups:"
-  echo "  - Phase 1 default / default_plus_rnd (cattle_dataset/input)"
+  echo "  - Phase 1 default / default_plus_rnd (input)"
   echo "  - Phase 2 deployment"
   print_paths_summary
   pause_line

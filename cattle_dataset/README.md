@@ -7,12 +7,12 @@ This public companion repo ships a single cattle benchmark — the **Van den Ber
 et al. simulated Holstein** dataset used in the ISMB 2026 poster. BreedAI starts
 from genotypes; upstream sequencing (FASTQ → VCF) is out of scope.
 
+This is the shipped example dataset. The pipeline's runtime inputs live in the
+repo-root **`input/`** folder (§3), not here.
+
 ```
 cattle_dataset/
 ├── README.md                     # This guide
-├── input/                        # Runtime inputs BreedAI reads (see §3)
-│   ├── Geno.csv                  #   ← you place these; both are gitignored
-│   └── Pheno.csv
 ├── raw/                          # Shipped raw data (as downloaded from Dryad)
 │   └── vandenberg/
 │       ├── Genotypes_26503SNPs.txt      # 1,285 animals × 26,503 SNPs (33 MB)
@@ -116,12 +116,13 @@ Optional inputs (used only when you enable those features):
 
 ## 3. Run BreedAI
 
-BreedAI reads its inputs from **`cattle_dataset/input/`** (it does *not* read the
-processed folder automatically). Copy the built CSVs in under the standard names:
+BreedAI reads its inputs from the repo-root **`input/`** folder (it does *not*
+read this processed folder automatically). Copy the built CSVs there under the
+standard names:
 
 ```bash
-cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  cattle_dataset/input/Geno.csv
-cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv cattle_dataset/input/Pheno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  input/Geno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv input/Pheno.csv
 
 cd scripts
 ./start_menu.sh
