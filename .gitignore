@@ -18,8 +18,10 @@ dist/
 
 # Data
 data/
-# Processed benchmark CSVs (rebuilt locally from the shipped raw data)
-cattle_dataset/**/*.csv
+# cattle_dataset/processed/ holds only generated artifacts (02_prepare_vandenberg.py
+# output: Geno/Pheno CSVs, metadata, QC report, log) — keep them local
+cattle_dataset/processed/*
+!cattle_dataset/processed/.gitkeep
 # Runtime inputs — users drop their own Geno.csv / Pheno.csv here; keep them local
 input/*.csv
 
@@ -129,3 +131,7 @@ scripts/*.dat
 ETA_*.dat
 mu.dat
 varE.dat
+
+# Temp sbatch scripts written by start_menu.sh submissions
+scripts/.*.sbatch
+*.sbatch

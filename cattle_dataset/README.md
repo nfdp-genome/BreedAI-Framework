@@ -19,9 +19,8 @@ cattle_dataset/
 │       ├── ID_Breed.txt                 # breed identifiers
 │       ├── DATASET_INFO.txt             # file inventory
 │       └── Phenotypes_GenCor_0.8/       # r_g = 0.8 scenario, 100 replicate files
-└── processed/                    # BreedAI-format output of §2 (rebuilt locally)
-    └── vandenberg_QTL300_rg8/
-        └── metadata_QTL300_rg8.json
+└── processed/                    # §2 writes Geno/Pheno CSVs + metadata here
+                                   # (generated; contents are git-ignored)
 ```
 
 ---

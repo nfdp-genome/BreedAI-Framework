@@ -1,0 +1,3 @@
+Generated output folder. 02_prepare_vandenberg.py writes the BreedAI-format
+Geno.csv / Pheno.csv, metadata, and QC report here. All contents are gitignored;
+this placeholder keeps the (otherwise empty) folder in git.

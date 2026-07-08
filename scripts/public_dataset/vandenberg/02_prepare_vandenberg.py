@@ -69,6 +69,17 @@ def _resolve_output(path_str):
     return p if p.is_absolute() else (REPO_ROOT / p)
 
 
+def _repo_rel(path):
+    """Path as a repo-root-relative POSIX string, so generated metadata stays
+    portable (no absolute machine paths). Falls back to the given path if it is
+    outside the repo."""
+    p = Path(path).resolve()
+    try:
+        return p.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
 class VandenbergPreparer:
     """Convert Van den Berg dataset to BreedAI format"""
     
@@ -332,8 +343,8 @@ class VandenbergPreparer:
             'n_traits': int(pheno_aligned.shape[1]),
             'traits': list(pheno_aligned.columns),
             'source': 'Van den Berg et al. (Dryad DOI: 10.5061/dryad.rq80k)',
-            'genotype_file': str(geno_output),
-            'phenotype_file': str(pheno_output),
+            'genotype_file': _repo_rel(geno_output),
+            'phenotype_file': _repo_rel(pheno_output),
         }
         
         metadata_file = self.output_dir / f'metadata{output_suffix}.json'
