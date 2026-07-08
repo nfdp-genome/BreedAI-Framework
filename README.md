@@ -84,9 +84,12 @@ bash scripts/start_menu.sh
 Per-model accuracy tables and figures are written under the run's results folder
 (CSV/JSON). See the [`USER_GUIDE.md`](USER_GUIDE.md).
 
-> **HPC note:** the SLURM scripts read the conda env name from `genomic_pred` and
-> auto-detect the conda base (`conda info --base`); set your own SLURM account
-> (`YOUR_SLURM_ACCOUNT` placeholder in the configs) before submitting.
+> **HPC note:** before submitting, set your SLURM account once —
+> `export SBATCH_ACCOUNT=<your-account>` (find it with
+> `sacctmgr show assoc user=$USER format=account`). `sbatch` reads this variable
+> natively, so it applies to every job; the menu also prompts for it. Leave it
+> unset to use your cluster's default account. The scripts use the conda env
+> `genomic_pred` and auto-detect the conda base (`conda info --base`).
 
 ---
 

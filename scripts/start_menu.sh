@@ -23,6 +23,13 @@ SBATCH_DEFAULT_CPUS="${SBATCH_DEFAULT_CPUS:-64}"
 SBATCH_DEFAULT_MEM="${SBATCH_DEFAULT_MEM:-512G}"
 SBATCH_DEFAULT_TIME="${SBATCH_DEFAULT_TIME:-7-00:00:00}"
 
+# Your SLURM account/allocation. sbatch reads SBATCH_ACCOUNT natively, so setting it
+# here (or exporting it before running: export SBATCH_ACCOUNT=<your-account>) applies to
+# every job the menu submits. Leave empty to use your cluster's default account.
+# Find yours with: sacctmgr show assoc user=$USER format=account
+SBATCH_ACCOUNT="${SBATCH_ACCOUNT:-}"
+export SBATCH_ACCOUNT
+
 # =========================
 # Helper functions
 # =========================
@@ -79,7 +86,6 @@ submit_with_sbatch() {
 #!/usr/bin/env bash
 #SBATCH --job-name=${job_name}
 #SBATCH --partition=${partition}
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --cpus-per-task=${cpus}
 #SBATCH --mem=${mem}
 #SBATCH --time=${time_limit}
@@ -101,6 +107,7 @@ conda activate "${DEFAULT_CONDA_ENV}" || true
 
 export NEW_X_FILE="${NEW_X_FILE:-}"
 export BREEDAI_REQUIRE_ALL_ALGOS=0
+export SBATCH_ACCOUNT="${SBATCH_ACCOUNT}"
 
 ${command}
 EOF
@@ -155,11 +162,16 @@ ask_sbatch_resources() {
   read -r -p "CPUs per task [${default_cpus}]: " SLURM_CPUS
   read -r -p "Memory [${default_mem}]: " SLURM_MEM
   read -r -p "Time limit (D-HH:MM:SS) [${default_time}]: " SLURM_TIME
+  read -r -p "SLURM account (Enter = ${SBATCH_ACCOUNT:-cluster default}): " _acct_in
 
   SLURM_PARTITION="${SLURM_PARTITION:-${default_partition}}"
   SLURM_CPUS="${SLURM_CPUS:-${default_cpus}}"
   SLURM_MEM="${SLURM_MEM:-${default_mem}}"
   SLURM_TIME="${SLURM_TIME:-${default_time}}"
+  # sbatch reads SBATCH_ACCOUNT from the environment; exporting it here applies to the
+  # menu's submission and to any array jobs the pipeline submits downstream.
+  SBATCH_ACCOUNT="${_acct_in:-${SBATCH_ACCOUNT}}"
+  export SBATCH_ACCOUNT
 }
 
 run_phase1() {

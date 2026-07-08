@@ -475,7 +475,6 @@ class ArrayJobManager:
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=32
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=$PROJECT_DIR/logs/train_validate/{job_name}_%A_%a.out
 #SBATCH --error=$PROJECT_DIR/logs/train_validate/{job_name}_%A_%a.err
 
@@ -584,7 +583,6 @@ exit $JOB_EXIT_CODE
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=$PROJECT_DIR/logs/train_validate/{job_name}_%j.out
 #SBATCH --error=$PROJECT_DIR/logs/train_validate/{job_name}_%j.err
 

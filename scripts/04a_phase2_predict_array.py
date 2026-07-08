@@ -219,7 +219,6 @@ class PredictionArrayManager:
 #SBATCH --mem=12G
 #SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=$PROJECT_DIR/logs/prediction/{job_name}_%A_%a.out
 #SBATCH --error=$PROJECT_DIR/logs/prediction/{job_name}_%A_%a.err
 
@@ -309,7 +308,6 @@ echo "=================================================================="
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=$PROJECT_DIR/logs/prediction/{job_name}_%j.out
 #SBATCH --error=$PROJECT_DIR/logs/prediction/{job_name}_%j.err
 

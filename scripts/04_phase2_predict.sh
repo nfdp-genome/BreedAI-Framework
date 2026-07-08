@@ -4,7 +4,6 @@
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=../logs/prediction/pred_prep_%j.out
 #SBATCH --error=../logs/prediction/pred_prep_%j.err
 

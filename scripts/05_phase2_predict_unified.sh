@@ -4,7 +4,6 @@
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output=../logs/prediction/predict_unified_%j.out
 #SBATCH --error=../logs/prediction/predict_unified_%j.err
 
@@ -285,7 +284,6 @@ if [[ ! -d "$MODELS_DIR" ]] || [[ $(ls -1 "$MODELS_DIR" 2>/dev/null | wc -l) -eq
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --dependency=afterok:__DEPLOYMENT_JOB_ID__
 #SBATCH --output=__PROJECT_DIR__/logs/prediction/pred_prep_%j.out
 #SBATCH --error=__PROJECT_DIR__/logs/prediction/pred_prep_%j.err

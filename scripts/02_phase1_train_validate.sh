@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=train_validate_prep
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --time=12:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=32

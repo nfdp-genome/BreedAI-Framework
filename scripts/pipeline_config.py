@@ -11,6 +11,7 @@ from __future__ import annotations
 import copy
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -193,7 +194,9 @@ def build_config_from_dataset_input(
         "monitoring": {"enabled": False, "baseline_run": ""},
         "slurm": {
             "partition": "batch",
-            "account": "YOUR_SLURM_ACCOUNT",
+            # sbatch reads SBATCH_ACCOUNT from the environment; leave empty to use the
+            # cluster default. Set it via: export SBATCH_ACCOUNT=<your-account>
+            "account": os.environ.get("SBATCH_ACCOUNT", ""),
             "mem": "64G",
             "cpus_per_task": 32,
             "time": "14-00:00:00",

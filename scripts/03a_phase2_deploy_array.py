@@ -422,7 +422,6 @@ class TrainingArrayManager:
 #SBATCH --mem=20G
 #SBATCH --cpus-per-task=8
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --output={logs_dir}/{job_name}_%A_%a.out
 #SBATCH --error={logs_dir}/{job_name}_%A_%a.err
 
@@ -527,7 +526,6 @@ exit $TRAIN_EXIT_CODE
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 # Logs relative to job cwd (scripts/ when submitted from 05)
 #SBATCH --output=../logs/deployment/{job_name}_%j.out
 #SBATCH --error=../logs/deployment/{job_name}_%j.err

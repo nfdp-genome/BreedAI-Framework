@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -168,7 +169,9 @@ def build_run_config(
         "monitoring": {"enabled": False, "baseline_run": ""},
         "slurm": {
             "partition": "batch",
-            "account": "YOUR_SLURM_ACCOUNT",
+            # sbatch reads SBATCH_ACCOUNT from the environment; leave empty to use the
+            # cluster default. Set it via: export SBATCH_ACCOUNT=<your-account>
+            "account": os.environ.get("SBATCH_ACCOUNT", ""),
             "mem": "64G",
             "cpus_per_task": 32,
             "time": "14-00:00:00",

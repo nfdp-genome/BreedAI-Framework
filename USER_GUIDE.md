@@ -17,6 +17,10 @@ cd <PROJECT_DIR>/scripts
 source $(conda info --base 2>/dev/null)/etc/profile.d/conda.sh
 conda activate genomic_pred
 
+# Set your SLURM account (find it: sacctmgr show assoc user=$USER format=account).
+# Optional if your cluster has a default account; the menu also prompts for it.
+export SBATCH_ACCOUNT=<your-account>
+
 ./start_menu.sh
 ```
 
@@ -193,12 +197,13 @@ BreedAI-Framework/
 | Resource | Value |
 |----------|-------|
 | Partition | batch |
-| Account | YOUR_SLURM_ACCOUNT |
+| Account | `$SBATCH_ACCOUNT` (unset → cluster default) |
 | Memory | 512 GB |
 | CPUs | 64 |
 | Time limit | 7 days |
 
-Customizable when prompted by the menu.
+Customizable when prompted by the menu. Set your account with
+`export SBATCH_ACCOUNT=<your-account>` before running (see Quick Start).
 
 ---
 

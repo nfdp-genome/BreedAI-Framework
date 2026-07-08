@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=deployment_prep
 #SBATCH --partition=batch
-#SBATCH --account=YOUR_SLURM_ACCOUNT
 #SBATCH --time=01:30:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
