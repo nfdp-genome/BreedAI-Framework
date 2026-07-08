@@ -46,6 +46,29 @@ except ImportError:
     PYSNPTOOLS_AVAILABLE = False
 
 
+# Repository root: .../scripts/public_dataset/vandenberg/02_prepare_vandenberg.py -> repo root.
+# This lets the script run from any working directory — relative paths below resolve against
+# the repo root, matching the paths used throughout the docs.
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def _resolve_input(path_str):
+    """Resolve an input path: absolute as-is; else use it if it exists relative to the
+    current directory, otherwise fall back to repo-root-relative."""
+    p = Path(path_str).expanduser()
+    if p.is_absolute():
+        return p
+    if p.exists():
+        return p.resolve()
+    return (REPO_ROOT / p).resolve()
+
+
+def _resolve_output(path_str):
+    """Resolve an output path relative to the repo root (unless absolute)."""
+    p = Path(path_str).expanduser()
+    return p if p.is_absolute() else (REPO_ROOT / p)
+
+
 class VandenbergPreparer:
     """Convert Van den Berg dataset to BreedAI format"""
     
@@ -371,44 +394,42 @@ def main():
         description='Convert Van den Berg dataset to BreedAI format (Geno.csv, Pheno.csv)',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  # Convert single phenotype file
-  python 02_prepare_vandenberg.py \\
-      --geno-file cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \\
-      --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
-      --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8 \\
-      --output-suffix _QTL300_rg8
+Examples (run from anywhere — paths resolve against the repo root):
+  # Reproduce the poster scenario — no arguments needed
+  python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py
 
-  # Convert with automatic QC
-  python 02_prepare_vandenberg.py \\
-      --geno-file cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \\
-      --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
-      --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8
+  # Convert a different replicate
+  python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py \\
+      --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_50.txt \\
+      --output-dir cattle_dataset/processed/vandenberg_rep50 \\
+      --output-suffix _rep50
         """
     )
     parser.add_argument(
         '--geno-file',
         type=str,
-        required=True,
-        help='Genotype file (Genotypes_26503SNPs.txt)'
+        default='cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt',
+        help='Genotype file. Relative paths resolve against the repo root. '
+             '(default: the shipped Van den Berg genotypes)'
     )
     parser.add_argument(
         '--pheno-file',
         type=str,
-        required=True,
-        help='Phenotype file (e.g., Phenotypes_QTL300_cor0.8.txt)'
+        default='cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt',
+        help='Phenotype file. Relative paths resolve against the repo root. '
+             '(default: replicate 1 of the r_g=0.8 set = the poster scenario)'
     )
     parser.add_argument(
         '--output-dir',
         type=str,
-        default='cattle_dataset/processed/vandenberg',
-        help='Output directory for BreedAI format files'
+        default='cattle_dataset/processed/vandenberg_QTL300_rg8',
+        help='Output directory for BreedAI-format files (relative to the repo root)'
     )
     parser.add_argument(
         '--output-suffix',
         type=str,
-        default='',
-        help='Suffix for output files (e.g., _QTL300_rg8)'
+        default='_QTL300_rg8',
+        help='Suffix for output files (default: _QTL300_rg8)'
     )
     parser.add_argument(
         '--no-qc',
@@ -417,23 +438,24 @@ Examples:
     )
     
     args = parser.parse_args()
-    
-    # Resolve paths
-    geno_path = Path(args.geno_file)
-    pheno_path = Path(args.pheno_file)
-    
+
+    # Resolve paths (works from any working directory; relative paths use the repo root)
+    geno_path = _resolve_input(args.geno_file)
+    pheno_path = _resolve_input(args.pheno_file)
+    output_dir = _resolve_output(args.output_dir)
+
     if not geno_path.exists():
         print(f"ERROR: Genotype file not found: {geno_path}")
         sys.exit(1)
-    
+
     if not pheno_path.exists():
         print(f"ERROR: Phenotype file not found: {pheno_path}")
         sys.exit(1)
-    
+
     # Create preparer
     preparer = VandenbergPreparer(
         input_dir=geno_path.parent,
-        output_dir=args.output_dir,
+        output_dir=output_dir,
         run_qc=not args.no_qc
     )
     
@@ -448,7 +470,7 @@ Examples:
         print("\n" + "=" * 60)
         print("✓ Dataset preparation completed successfully!")
         print("=" * 60)
-        print(f"  Output directory: {args.output_dir}")
+        print(f"  Output directory: {output_dir}")
         print(f"  Geno file: Geno{args.output_suffix}.csv")
         print(f"  Pheno file: Pheno{args.output_suffix}.csv")
         if not args.no_qc:

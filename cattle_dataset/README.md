@@ -60,17 +60,26 @@ raw files (or from a fresh Dryad download) in one command.
 
 ### Option A — use the shipped raw data (default)
 
+The defaults already point at the shipped files, so reproducing the poster
+scenario takes **no arguments** and runs from **any** directory:
+
 ```bash
-# From the repository root
-python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py \
-    --geno-file  cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \
-    --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \
-    --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8 \
-    --output-suffix _QTL300_rg8
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py
 ```
 
-This writes `Geno_QTL300_rg8.csv` and `Pheno_QTL300_rg8.csv` into the processed
-folder. (BreedAI runs its own QC in Phase 1, so no separate QC step is needed.)
+This writes `Geno_QTL300_rg8.csv` and `Pheno_QTL300_rg8.csv` into
+`cattle_dataset/processed/vandenberg_QTL300_rg8/`. (BreedAI runs its own QC in
+Phase 1, so no separate QC step is needed.)
+
+To convert a different replicate, override the paths (relative paths resolve
+against the repo root):
+
+```bash
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py \
+    --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_50.txt \
+    --output-dir cattle_dataset/processed/vandenberg_rep50 \
+    --output-suffix _rep50
+```
 
 ### Option B — download from Dryad first
 
