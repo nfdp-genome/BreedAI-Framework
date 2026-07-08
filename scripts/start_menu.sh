@@ -80,7 +80,10 @@ submit_with_sbatch() {
   local time_limit="$6"
 
   local sbatch_file
-  sbatch_file="$(mktemp "${SCRIPT_DIR}/.${job_name}.XXXXXX.sbatch")"
+  # Write the generated sbatch script into logs/ (gitignored), NOT into scripts/,
+  # so it never lands in the tracked tree — it contains SBATCH_ACCOUNT and other
+  # run-specific values that should stay local.
+  sbatch_file="$(mktemp "${LOG_DIR}/.${job_name}.XXXXXX.sbatch")"
 
   cat > "${sbatch_file}" <<EOF
 #!/usr/bin/env bash

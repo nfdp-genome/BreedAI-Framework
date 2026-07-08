@@ -131,7 +131,3 @@ scripts/*.dat
 ETA_*.dat
 mu.dat
 varE.dat
-
-# Temp sbatch scripts written by start_menu.sh submissions
-scripts/.*.sbatch
-*.sbatch
