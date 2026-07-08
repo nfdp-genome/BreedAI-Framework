@@ -55,7 +55,7 @@ if [[ -z "$PROJECT_DIR" ]]; then
 fi
 
 SCRIPTS_DIR="$PROJECT_DIR/scripts"
-DATA_DIR="$PROJECT_DIR/dataset/input"
+DATA_DIR="$PROJECT_DIR/cattle_dataset/input"
 MODELS_DIR="$PROJECT_DIR/Phase2_Deployment_Prediction/deployment/models"
 DEPLOYMENT_DIR="$PROJECT_DIR/Phase2_Deployment_Prediction/deployment"
 PREDICTION_DIR="$PROJECT_DIR/Phase2_Deployment_Prediction/prediction"
@@ -293,7 +293,7 @@ if [[ ! -d "$MODELS_DIR" ]] || [[ $(ls -1 "$MODELS_DIR" 2>/dev/null | wc -l) -eq
 # Project paths
 PROJECT_DIR="__PROJECT_DIR__"
 SCRIPTS_DIR="$PROJECT_DIR/scripts"
-DATA_DIR="$PROJECT_DIR/dataset/input"
+DATA_DIR="$PROJECT_DIR/cattle_dataset/input"
 MODELS_DIR="__MODELS_DIR__"
 NEW_ANIMALS_FILE="__NEW_ANIMALS_FILE__"
 PREDICTION_DIR="__PREDICTION_DIR__"

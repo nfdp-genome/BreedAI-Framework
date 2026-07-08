@@ -1,0 +1,141 @@
+# BreedAI — Cattle Benchmark Dataset
+
+Everything you need to obtain the benchmark data, build BreedAI's input files
+(`Geno.csv` / `Pheno.csv`), and run the pipeline.
+
+This public companion repo ships a single cattle benchmark — the **Van den Berg
+et al. simulated Holstein** dataset used in the ISMB 2026 poster. BreedAI starts
+from genotypes; upstream sequencing (FASTQ → VCF) is out of scope.
+
+```
+cattle_dataset/
+├── README.md                     # This guide
+├── input/                        # Runtime inputs BreedAI reads (see §3)
+│   ├── Geno.csv                  #   ← you place these; both are gitignored
+│   └── Pheno.csv
+├── raw/                          # Shipped raw data (as downloaded from Dryad)
+│   └── vandenberg/
+│       ├── Genotypes_26503SNPs.txt      # 1,285 animals × 26,503 SNPs (33 MB)
+│       ├── ID_Breed.txt                 # breed identifiers
+│       ├── DATASET_INFO.txt             # file inventory
+│       └── Phenotypes_GenCor_0.8/       # r_g = 0.8 scenario, 100 replicate files
+└── processed/                    # BreedAI-format output of §2 (rebuilt locally)
+    └── vandenberg_QTL300_rg8/
+        └── metadata_QTL300_rg8.json
+```
+
+---
+
+## 1. The data
+
+**Van den Berg, I., *et al.* (2020).** "Across population genomic prediction
+scenarios in which Bayesian variable selection outperforms GBLUP."
+*BMC Genomics* 21, 492. Paper DOI:
+[10.1186/s12864-020-06906-0](https://doi.org/10.1186/s12864-020-06906-0) ·
+Data (Dryad) DOI:
+[10.5061/dryad.rq80k](https://datadryad.org/stash/dataset/doi:10.5061/dryad.rq80k)
+
+A simulated Holstein cattle dataset for evaluating genomic prediction methods
+across genetic architectures:
+
+- **Genotypes:** 1,285 animals × 26,503 SNPs, additive-coded **0 / 1 / 2**.
+- **Phenotypes:** True Breeding Values (TBVs); **4 traits** per replicate.
+- **Scenarios:** simulated across QTL counts × genetic correlations, 100
+  replicates each. This repo ships the **genetic correlation r_g = 0.8** set
+  (`Phenotypes_GenCor_0.8/`); the r_g = 0.4 and 1.0 sets are available from the
+  same Dryad record.
+
+**Poster reference scenario — `vandenberg_QTL300_rg8`:** built from the r_g = 0.8
+phenotypes, replicate 1. After BreedAI's Phase-1 QC this yields **1,285 animals ×
+26,479 SNPs**, split 771 / 257 / 257 (60 / 20 / 20). Fixed effects are
+intercept-only for this proof of concept.
+
+---
+
+## 2. Build `Geno.csv` / `Pheno.csv`
+
+The processed CSVs are **not committed** — you regenerate them from the shipped
+raw files (or from a fresh Dryad download) in one command.
+
+### Option A — use the shipped raw data (default)
+
+```bash
+# From the repository root
+python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py \
+    --geno-file  cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \
+    --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \
+    --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8 \
+    --output-suffix _QTL300_rg8
+```
+
+This writes `Geno_QTL300_rg8.csv` and `Pheno_QTL300_rg8.csv` into the processed
+folder. (BreedAI runs its own QC in Phase 1, so no separate QC step is needed.)
+
+### Option B — download from Dryad first
+
+```bash
+python scripts/public_dataset/vandenberg/01_download_vandenberg.py \
+    --output-dir cattle_dataset/raw
+```
+
+> Dryad serves files via dynamic links; manual URL extraction may be required —
+> see [`scripts/public_dataset/vandenberg/00_quick_start.md`](../scripts/public_dataset/vandenberg/00_quick_start.md).
+> Then run the Option A command to convert.
+
+### File format
+
+Both files are matched by animal ID (first column).
+
+| File | Rows | Columns | Values |
+|------|------|---------|--------|
+| **`Geno.csv`** | one per animal (`AnimalID`) | one per SNP (`SNP_1`, `SNP_2`, …) | `0` / `1` / `2` — copies of the alternate allele |
+| **`Pheno.csv`** | one per animal (`AnimalID`, matching Geno.csv) | one per trait (`Trait_1`, …) | numeric phenotype / breeding value |
+
+```csv
+# Geno.csv                     # Pheno.csv
+AnimalID,SNP_1,SNP_2,SNP_3     AnimalID,Trait_1,Trait_2
+1,0,1,2                        1,45.2,12.3
+2,1,1,0                        2,42.1,11.8
+```
+
+Optional inputs (used only when you enable those features):
+`metadata.csv` (sample covariates — breed, herd, sex) and `pedigree.csv`
+(`animal, sire, dam` — for ssGBLUP / H-matrix).
+
+---
+
+## 3. Run BreedAI
+
+BreedAI reads its inputs from **`cattle_dataset/input/`** (it does *not* read the
+processed folder automatically). Copy the built CSVs in under the standard names:
+
+```bash
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  cattle_dataset/input/Geno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv cattle_dataset/input/Pheno.csv
+
+cd scripts
+./start_menu.sh
+```
+
+Menu:
+
+```
+1) Phase 1 — Learning & Benchmarking
+2) Phase 2 — Deployment & Prediction
+3) Check job status and results
+4) Test setup
+5) Exit
+```
+
+- **Option 1 — Phase 1:** loads `Geno.csv` + `Pheno.csv`, runs QC (variance
+  filtering, VanRaden G-matrix), makes a seed-controlled **60 / 20 / 20** split,
+  trains the default GBLUP baseline and the full R&D algorithm suite + stacking
+  ensembles on the *same* splits, and generates report notebooks.
+- **Option 2 — Phase 2:** deploys models on the combined train+validation data
+  and predicts breeding values for new animals, with SNP-overlap guardrails
+  (warn below 80 %, reject below 50 %).
+
+Outputs land under `Phase1_Learning_Benchmarking/` and
+`Phase2_Deployment_Prediction/`; see the top-level
+[`README.md`](../README.md) and [`USER_GUIDE.md`](../USER_GUIDE.md) for the full
+output map, the algorithm list, and troubleshooting.

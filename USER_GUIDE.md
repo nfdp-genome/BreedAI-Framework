@@ -34,7 +34,7 @@ Menu options:
 
 ## Input Data
 
-Phase 1 reads two files from `dataset/input/`:
+Phase 1 reads two files from `cattle_dataset/input/`:
 
 | File | What it is |
 |------|-----------|
@@ -50,11 +50,11 @@ data, then copy them in:
 # From repository root
 python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # builds Geno_QTL300_rg8.csv / Pheno_QTL300_rg8.csv
 
-cp dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv dataset/input/Geno.csv
-cp dataset/public_datasets/cattle/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv dataset/input/Pheno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv cattle_dataset/input/Geno.csv
+cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv cattle_dataset/input/Pheno.csv
 ```
 
-See `dataset/public_datasets/cattle/README.md` for details.
+See `cattle_dataset/README.md` for details.
 
 > **Scope:** this public companion repo starts from genotypes. VCF / PLINK / FASTQ
 > entry (upstream sequencing → VCF QC) is out of scope here.
@@ -165,9 +165,10 @@ bash 05_phase2_predict_unified.sh
 
 ```
 BreedAI-Framework/
-├── dataset/                          Input data and public benchmarks
+├── cattle_dataset/                   Benchmark data + your runtime inputs
 │   ├── input/                        ← Put Geno.csv + Pheno.csv here
-│   └── public_datasets/cattle/       Van den Berg benchmark
+│   ├── raw/vandenberg/               Van den Berg raw data (as downloaded)
+│   └── processed/                    BreedAI-format Geno/Pheno (rebuilt locally)
 ├── Phase1_Learning_Benchmarking/     Phase 1 outputs (QC, training, stacking)
 ├── Phase2_Deployment_Prediction/     Phase 2 outputs (deployment, prediction)
 ├── notebooks/                        Generated Jupyter report notebooks

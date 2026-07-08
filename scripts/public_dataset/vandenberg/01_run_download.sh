@@ -33,10 +33,10 @@ fi
 echo "Starting download..."
 python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
     --dataset vandenberg \
-    --output-dir data/public_datasets/raw \
+    --output-dir cattle_dataset/raw \
     --url-config scripts/public_dataset/vandenberg/vandenberg_urls.json
 
 echo ""
-echo "Download complete! Files saved to: data/public_datasets/raw/vandenberg/"
+echo "Download complete! Files saved to: cattle_dataset/raw/vandenberg/"
 
 

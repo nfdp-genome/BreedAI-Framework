@@ -504,7 +504,7 @@ Examples:
     parser.add_argument(
         '--output-dir',
         type=str,
-        default='data/public_datasets/raw',
+        default='cattle_dataset/raw',
         help='Directory to save downloaded datasets'
     )
     parser.add_argument(

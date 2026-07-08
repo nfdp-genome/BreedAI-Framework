@@ -374,16 +374,16 @@ def main():
 Examples:
   # Convert single phenotype file
   python 02_prepare_vandenberg.py \\
-      --geno-file data/public_datasets/raw/vandenberg/Genotypes_26503SNPs.txt \\
-      --pheno-file data/public_datasets/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
-      --output-dir data/public_datasets/processed/vandenberg_QTL300_rg8 \\
+      --geno-file cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \\
+      --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
+      --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8 \\
       --output-suffix _QTL300_rg8
 
   # Convert with automatic QC
   python 02_prepare_vandenberg.py \\
-      --geno-file data/public_datasets/raw/vandenberg/Genotypes_26503SNPs.txt \\
-      --pheno-file data/public_datasets/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
-      --output-dir data/public_datasets/processed/vandenberg_QTL300_rg8
+      --geno-file cattle_dataset/raw/vandenberg/Genotypes_26503SNPs.txt \\
+      --pheno-file cattle_dataset/raw/vandenberg/Phenotypes_GenCor_0.8/Phenotypes_replicate_1.txt \\
+      --output-dir cattle_dataset/processed/vandenberg_QTL300_rg8
         """
     )
     parser.add_argument(
@@ -401,7 +401,7 @@ Examples:
     parser.add_argument(
         '--output-dir',
         type=str,
-        default='data/public_datasets/processed/vandenberg',
+        default='cattle_dataset/processed/vandenberg',
         help='Output directory for BreedAI format files'
     )
     parser.add_argument(

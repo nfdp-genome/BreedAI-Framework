@@ -624,7 +624,7 @@ def create_html_report(dataset_dir, gmatrix_dir, output_file):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Execute QC pipeline analysis and generate HTML report')
-    parser.add_argument('--dataset_dir', default='../dataset/input', help='Path to dataset directory')
+    parser.add_argument('--dataset_dir', default='../cattle_dataset/input', help='Path to dataset directory')
     parser.add_argument('--gmatrix_dir', default='../train_validate_array/gmatrix', help='Path to G-matrix directory')
     parser.add_argument('--output_file', default='../reports/qc_pipeline_report.html', help='Path to output HTML file')
 

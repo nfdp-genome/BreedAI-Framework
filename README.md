@@ -72,7 +72,7 @@ conda activate genomic_pred
 #    …or, without conda:  pip install -r requirements.txt
 
 # 2. Get the data — Van den Berg et al. (2020), Dryad DOI: 10.5061/dryad.rq80k
-#    See dataset/public_datasets/cattle/vandenberg/README.md for details, then
+#    See cattle_dataset/README.md for details, then
 #    build the BreedAI Geno.csv / Pheno.csv:
 python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py   # see script header for args
 

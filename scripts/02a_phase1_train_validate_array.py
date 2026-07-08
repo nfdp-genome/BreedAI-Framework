@@ -678,8 +678,8 @@ if [[ $COMBINE_EXIT_CODE -eq 0 ]]; then
     echo "Generating Phase 1 EDA/QC report (Geno QC, Pheno QC, G-matrix)..."
     
     # Find dataset directory
-    if [[ -d "$PROJECT_DIR/dataset/input" ]]; then
-        DATASET_DIR="$PROJECT_DIR/dataset/input"
+    if [[ -d "$PROJECT_DIR/cattle_dataset/input" ]]; then
+        DATASET_DIR="$PROJECT_DIR/cattle_dataset/input"
     else
         DATASET_DIR="$PROJECT_DIR/data"
     fi

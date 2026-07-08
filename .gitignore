@@ -18,8 +18,8 @@ dist/
 
 # Data
 data/
-# Ignore all CSV files in dataset folder
-dataset/**/*.csv
+# Ignore all CSV files in the dataset folder (processed + runtime inputs stay local)
+cattle_dataset/**/*.csv
 
 # Results folder (removed - using array folders instead)
 results/
@@ -103,8 +103,6 @@ Phase2_Deployment_Prediction/prediction/shared_data_*.pkl
 # Track CSV prediction results and notebooks
 !Phase2_Deployment_Prediction/prediction/*.csv
 !Phase2_Deployment_Prediction/notebooks/
-# Keep large sheep spreadsheets local
-dataset/public_datasets/sheep/GSE152717/*.xlsx
 
 # Large generated artifacts (keep local, not in git)
 Phase1_Learning_Benchmarking/core_dataset/*.csv
@@ -122,13 +120,6 @@ plans/
 # test artifacts written into the repo root by tests/test_planner_routing.py
 tmp_test_plan/
 tmp_test_plan_rnd/
-dataset/public_datasets/goat/GSE145419/
-dataset/public_datasets/sheep/GSE152717/*.tar
-dataset/public_datasets/sheep/GSE152717/*.gz
-dataset/public_datasets/sheep/GSE152717/*.html*
-dataset/public_datasets/goat/GSE145419/*.tar
-dataset/public_datasets/goat/GSE145419/*.gz
-dataset/public_datasets/goat/GSE145419/*.html*
 .pytest_cache/
 
 # BGLR scratch outputs

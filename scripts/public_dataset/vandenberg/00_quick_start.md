@@ -48,7 +48,7 @@ Or directly:
 cd <PROJECT_DIR>
 python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
     --dataset vandenberg \
-    --output-dir data/public_datasets/raw \
+    --output-dir cattle_dataset/raw \
     --url-config scripts/public_dataset/vandenberg/vandenberg_urls.json
 ```
 
@@ -60,7 +60,7 @@ If you already have the URLs, you can run:
 cd <PROJECT_DIR>
 python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
     --dataset vandenberg \
-    --output-dir data/public_datasets/raw \
+    --output-dir cattle_dataset/raw \
     --url-config scripts/public_dataset/vandenberg/vandenberg_urls.json
 ```
 
@@ -68,7 +68,7 @@ python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
 
 Files will be downloaded to:
 ```
-data/public_datasets/raw/vandenberg/
+cattle_dataset/raw/vandenberg/
 ```
 
 ## Features
@@ -76,6 +76,6 @@ data/public_datasets/raw/vandenberg/
 - ✅ Progress bars with `tqdm`
 - ✅ Automatic resume (skips existing files)
 - ✅ Support for compressed archives
-- ✅ Comprehensive logging to `data/public_datasets/raw/download.log`
+- ✅ Comprehensive logging to `cattle_dataset/raw/download.log`
 
 

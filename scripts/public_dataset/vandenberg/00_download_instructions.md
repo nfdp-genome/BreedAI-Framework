@@ -57,7 +57,7 @@ Replace `XXXXX` with the actual file IDs from the Dryad download links.
 cd <PROJECT_DIR>
 python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
     --dataset vandenberg \
-    --output-dir data/public_datasets/raw \
+    --output-dir cattle_dataset/raw \
     --url-config vandenberg_urls.json
 ```
 
@@ -66,7 +66,7 @@ python3 scripts/public_dataset/vandenberg/01_download_vandenberg.py \
 If you prefer to download manually:
 
 1. Visit: https://datadryad.org/stash/dataset/doi:10.5061/dryad.rq80k
-2. Download all required files to `data/public_datasets/raw/vandenberg/`
+2. Download all required files to `cattle_dataset/raw/vandenberg/`
 3. The script will skip files that already exist
 
 ## Features
@@ -82,7 +82,7 @@ If you prefer to download manually:
 - The script uses `requests` library for downloads
 - Progress bars require `tqdm` (already installed)
 - For 7z archives, install `py7zr`: `pip install py7zr`
-- Files are saved to `data/public_datasets/raw/vandenberg/`
+- Files are saved to `cattle_dataset/raw/vandenberg/`
 
 
 
