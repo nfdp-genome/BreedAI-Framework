@@ -221,6 +221,7 @@ Customizable when prompted by the menu. Set your account with
 
 | Problem | Solution |
 |---------|----------|
+| `python: can't open file '.../scripts/...': No such file or directory` | You're not in the repo root. `cd` into the cloned repository first, then run the command (all paths are relative to the repo root). |
 | `ModuleNotFoundError: numpy` | Activate conda env first |
 | `sbatch: command not found` | Normal on login nodes — sbatch still works |
 | Job stuck at BayesianRidge | Normal for large datasets; check memory with `sacct -j JOBID --format=MaxRSS` |
