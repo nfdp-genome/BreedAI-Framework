@@ -70,17 +70,20 @@ the pipeline. Preprocessing and data splits are held constant across every model
 so accuracy differences are interpretable and results are comparable.
 
 ```bash
-# 1. Environment (conda)
+# 1. Enter the repository — run every command below from the repo root
+cd /path/to/BreedAI-Framework            # the directory you cloned
+
+# 2. Environment (conda)
 conda env create -f environment.yml      # creates the `genomic_pred` env
 conda activate genomic_pred
 #    …or, without conda:  pip install -r requirements.txt
 
-# 2. Provide your data — drop two files into input/ (matched by animal ID):
+# 3. Provide your data — drop two files into input/ (matched by animal ID):
 #      input/Geno.csv     animals × SNPs, coded 0/1/2
 #      input/Pheno.csv    animals × traits
 #    Optional: input/metadata.csv (covariates), input/pedigree.csv (ssGBLUP)
 
-# 3. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits),
+# 4. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits),
 #    locally or on SLURM/HPC via the interactive menu:
 cd scripts
 ./start_menu.sh
@@ -108,7 +111,8 @@ so you can reproduce the poster end to end. Build its `Geno.csv` / `Pheno.csv`
 from the shipped raw data and copy them into `input/`, then run as above:
 
 ```bash
-# No arguments needed — the defaults reproduce the poster scenario (QTL300, r_g=0.8)
+# Run from the repo root (cd into it first — see "How to run" step 1).
+# No arguments needed — the defaults reproduce the poster scenario (QTL300, r_g=0.8):
 python scripts/public_dataset/vandenberg/02_prepare_vandenberg.py
 
 cp cattle_dataset/processed/vandenberg_QTL300_rg8/Geno_QTL300_rg8.csv  input/Geno.csv
