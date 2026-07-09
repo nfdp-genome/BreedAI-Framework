@@ -75,16 +75,31 @@ def _get_rscript_bin():
     return shutil.which("Rscript") or ""
 
 def _check_bglr_available(rscript_bin):
-    """Check if Rscript and BGLR package are available."""
+    """Check whether Rscript can load the BGLR package.
+
+    BGLR is only needed for the Bayesian methods (BayesA/B/Cpi). The probe is
+    bounded by a timeout so a slow or hanging R install can never block the
+    pipeline (e.g. a cold compute node loading BGLR over a network home dir).
+    - Set BREEDAI_SKIP_BGLR_CHECK=1 to skip the probe entirely (default track).
+    - Set BREEDAI_BGLR_CHECK_TIMEOUT to change the timeout in seconds (default 60).
+    On timeout/failure it returns False -> the Bayesian methods are skipped.
+    """
     if not rscript_bin:
         return False
+    if os.environ.get("BREEDAI_SKIP_BGLR_CHECK", "0").strip().lower() in ("1", "true", "yes"):
+        return False
+    try:
+        timeout_s = float(os.environ.get("BREEDAI_BGLR_CHECK_TIMEOUT", "60"))
+    except ValueError:
+        timeout_s = 60.0
     try:
         result = subprocess.run(
             [rscript_bin, "-e", "suppressMessages(library(BGLR))"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=True,
-            text=True
+            text=True,
+            timeout=timeout_s,
         )
         return result.returncode == 0
     except Exception:

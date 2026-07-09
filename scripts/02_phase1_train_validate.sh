@@ -141,6 +141,9 @@ ENSEMBLE_ARGS=""
 if [[ "$BREEDAI_PIPELINE_MODE" == "default" ]]; then
     ALGO_ARGS="--algorithms GBLUP_Ridge GBLUP_RidgeCV"
     echo "Running default mode: GBLUP only"
+    # Default track is pure Python (GBLUP) — never needs R/BGLR. Skip the R probe
+    # so a slow/hanging R install can't stall the run.
+    export BREEDAI_SKIP_BGLR_CHECK=1
 else
     ENSEMBLE_ARGS="--ensemble simple_average median weighted_average stacking_nonneg_ridge"
     echo "Running default + R&D mode: all algorithms + ensembles"
