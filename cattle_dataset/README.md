@@ -149,3 +149,27 @@ Outputs land under `Phase1_Learning_Benchmarking/` and
 `Phase2_Deployment_Prediction/`; see the top-level
 [`README.md`](../README.md) and [`USER_GUIDE.md`](../USER_GUIDE.md) for the full
 output map, the algorithm list, and troubleshooting.
+
+---
+
+## 4. Test the deployment SNP-overlap guardrails (optional)
+
+Phase 2 aligns new-animal genotypes to the reference panel and guards against
+mismatched SNP sets — it **warns** below 80 % overlap and **rejects** below 50 %.
+To see all three outcomes, generate three synthetic new-animal files from
+`input/Geno.csv` (markers dropped/added + columns shuffled):
+
+```bash
+python scripts/public_dataset/vandenberg/03_make_overlap_test_files.py
+```
+
+This writes into `input/` (both files are gitignored):
+
+| File | Overlap | Expected Phase-2 outcome |
+|------|---------|--------------------------|
+| `Geno_test1_normal_overlap.csv`   | ~98 % | passes cleanly |
+| `Geno_test2_low_overlap.csv`      | ~60 % | warns, still predicts |
+| `Geno_test3_very_low_overlap.csv` | ~30 % | rejected (below 50 %) |
+
+Then run Phase 2 (menu → option 2) and, when prompted for the new-animal
+genotype file, point it at each `input/Geno_test*.csv` in turn.

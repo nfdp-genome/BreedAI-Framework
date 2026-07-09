@@ -20,6 +20,9 @@ def _set_code_hidden_by_default(notebook):
             metadata["collapsed"] = True
             jupyter_meta = metadata.setdefault("jupyter", {})
             jupyter_meta["source_hidden"] = True
+            # nbformat v4 requires these on every code cell
+            cell.setdefault("outputs", [])
+            cell.setdefault("execution_count", None)
 
 def create_qc_report_notebook(dataset_dir, gmatrix_dir, output_file):
     """Create a Jupyter notebook with comprehensive QC analysis"""
@@ -97,9 +100,12 @@ def create_qc_report_notebook(dataset_dir, gmatrix_dir, output_file):
             "plt.style.use('seaborn-v0_8')\n",
             "sns.set_palette('husl')\n",
             "\n",
-            "# Define paths\n",
-            f"dataset_dir = Path('{dataset_dir}')\n",
-            f"gmatrix_dir = Path('{gmatrix_dir}')\n",
+            "# Resolve the repo root from the working directory (portable; no absolute paths)\n",
+            "_repo = Path.cwd()\n",
+            "while _repo != _repo.parent and not (_repo / 'environment.yml').exists():\n",
+            "    _repo = _repo.parent\n",
+            "dataset_dir = _repo / 'input'\n",
+            "gmatrix_dir = _repo / 'Phase1_Learning_Benchmarking' / 'QC' / 'gmatrix'\n",
             "\n",
             "print('🔍 Loading QC pipeline data...')\n",
             "\n",
@@ -483,7 +489,9 @@ def create_qc_report_notebook(dataset_dir, gmatrix_dir, output_file):
             "    print(f'   • Shape: {gmatrix_df.shape}')\n",
             "    print(f'   • Animals: {gmatrix_df.shape[0]}')\n",
             "    print(f'   • Matrix is symmetric: {np.allclose(gmatrix_df.values, gmatrix_df.values.T)}')\n",
-            "    print(f'   • Matrix is positive semi-definite: {np.all(np.linalg.eigvals(gmatrix_df.values) >= -1e-10)}')\n",
+            "    # G is symmetric -> use eigvalsh (much faster and numerically stable); compute once\n",
+            "    _eigvals_all = np.sort(np.linalg.eigvalsh(gmatrix_df.values))[::-1]\n",
+            "    print(f'   • Matrix is positive semi-definite: {np.all(_eigvals_all >= -1e-10)}')\n",
             "    print()\n",
             "    \n",
             "    # Diagonal analysis\n",
@@ -506,8 +514,8 @@ def create_qc_report_notebook(dataset_dir, gmatrix_dir, output_file):
             "    print(f'   • Range: [{off_diagonal.min():.4f}, {off_diagonal.max():.4f}]')\n",
             "    print()\n",
             "    \n",
-            "    # Eigenvalue analysis\n",
-            "    eigenvals = np.linalg.eigvals(gmatrix_df.values)\n",
+            "    # Eigenvalue analysis (reuse the eigvalsh result; already sorted descending)\n",
+            "    eigenvals = _eigvals_all\n",
             "    eigenvals = np.sort(eigenvals)[::-1]  # Sort descending\n",
             "    \n",
             "    print('📊 Eigenvalue Analysis:')\n",

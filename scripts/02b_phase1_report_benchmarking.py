@@ -19,6 +19,9 @@ def _set_code_hidden_by_default(notebook):
             metadata["collapsed"] = True
             jupyter_meta = metadata.setdefault("jupyter", {})
             jupyter_meta["source_hidden"] = True
+            # nbformat v4 requires these on every code cell
+            cell.setdefault("outputs", [])
+            cell.setdefault("execution_count", None)
 
 def create_report_notebook(results_file, output_file):
     """Create a Jupyter notebook with comprehensive analysis"""
@@ -120,8 +123,11 @@ def create_report_notebook(results_file, output_file):
             "plt.style.use('seaborn-v0_8')\n",
             "sns.set_palette('husl')\n",
             "\n",
-            "# Set data directory\n",
-            "DATA_DIR = Path('<PROJECT_DIR>/Phase1_Learning_Benchmarking/training_validation')\n",
+            "# Resolve the repo root from the working directory (portable; no placeholders)\n",
+            "_repo = Path.cwd()\n",
+            "while _repo != _repo.parent and not (_repo / 'environment.yml').exists():\n",
+            "    _repo = _repo.parent\n",
+            "DATA_DIR = _repo / 'Phase1_Learning_Benchmarking' / 'training_validation'\n",
             "print(f\"📁 Data directory: {DATA_DIR}\")\n",
             "\n",
             "# Load results\n",
