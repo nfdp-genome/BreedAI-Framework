@@ -66,7 +66,7 @@ Before running BreedAI, activate the recommended environment if needed:
   conda activate ${DEFAULT_CONDA_ENV}
 
 If conda is not already initialized in your shell, run:
-  source ~/miniconda3/etc/profile.d/conda.sh
+  source "$(conda info --base)/etc/profile.d/conda.sh"
 
 EOF
 }
@@ -196,26 +196,6 @@ run_phase1() {
     return
   fi
 
-  echo "Species:"
-  echo "  1) cattle"
-  echo "  2) sheep"
-  echo "  3) goat"
-  echo "  4) camel"
-  echo "  5) horse"
-  echo
-  read -r -p "Species [1-5] (default=1): " species_choice
-  case "${species_choice:-1}" in
-    1) species="cattle" ;;
-    2) species="sheep" ;;
-    3) species="goat" ;;
-    4) species="camel" ;;
-    5) species="horse" ;;
-    *) species="cattle" ;;
-  esac
-
-  read -r -p "Breeding goal (default=growth): " goal
-  goal="${goal:-growth}"
-
   echo
   echo "Phase 1 pipeline type:"
   echo "  1) Default — literature-aligned baseline (GBLUP) only"
@@ -232,9 +212,7 @@ run_phase1() {
 
   echo
   echo "Selected settings:"
-  echo "  Species : ${species}"
-  echo "  Goal    : ${goal}"
-  echo "  Mode    : ${run_mode}"
+  echo "  Mode : ${run_mode}"
   ask_execution_mode
 
   if [[ "${EXEC_MODE}" == "sbatch" ]]; then
