@@ -124,9 +124,13 @@ cp cattle_dataset/processed/vandenberg_QTL300_rg8/Pheno_QTL300_rg8.csv input/Phe
 ## Two Modes
 
 ### Default Mode
-Literature/production-aligned pipeline:
-- **GBLUP** (ridge regression on VanRaden G-matrix)
-- **ssGBLUP** (if pedigree exists)
+The genomic-prediction baseline — **GBLUP / RR-BLUP** (`GBLUP_Ridge`, `GBLUP_RidgeCV`):
+- Ridge regression on the standardized **marker matrix** — this is RR-BLUP, which is
+  mathematically equivalent to GBLUP on the VanRaden G-matrix.
+- **`GBLUP_RidgeCV`** selects the ridge penalty by 5-fold cross-validation;
+  **`GBLUP_Ridge`** uses a fixed penalty (α = 1.0).
+- The penalty is CV-driven here — **not** derived from REML variance components
+  (heritability) as in classical mixed-model GBLUP.
 
 ### Default + R&D Mode
 Extends default with the full algorithm suite on the **same splits and preprocessing**:

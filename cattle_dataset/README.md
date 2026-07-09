@@ -107,9 +107,9 @@ AnimalID,SNP_1,SNP_2,SNP_3     AnimalID,Trait_1,Trait_2
 2,1,1,0                        2,42.1,11.8
 ```
 
-Optional inputs (used only when you enable those features):
-`metadata.csv` (sample covariates — breed, herd, sex) and `pedigree.csv`
-(`animal, sire, dam` — for ssGBLUP / H-matrix).
+Optional input: `metadata.csv` (sample covariates — breed, herd, sex — for
+fixed-effect modeling). A `pedigree.csv` (`animal, sire, dam`) is accepted but
+not yet used; pedigree-based single-step (ssGBLUP / H-matrix) is future work.
 
 ---
 

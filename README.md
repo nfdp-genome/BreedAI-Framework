@@ -31,8 +31,9 @@ every model, so accuracy differences are interpretable and results are auditable
 
 - **(A) Core dataset** — one shared backbone for every method: sample & SNP QC ·
   imputation · VanRaden G-matrix · fixed-effects modeling · seed-controlled
-  60/20/20 split (optional pedigree → H-matrix / ssGBLUP).
-- **(B) Default track** — literature-aligned **GBLUP** baseline → GEBV + reliability.
+  60/20/20 split.
+- **(B) Default track** — a **GBLUP (RR-BLUP)** baseline: ridge regression on the
+  marker matrix with a cross-validated penalty (`GBLUP_RidgeCV`) → GEBV + reliability.
 - **(C) R&D track** — **18 models** (Bayesian · linear · kernel · tree · neural) +
   stacking ensembles, on the *same* data & splits.
 - **(D) Deployment** — new-animal prediction with SNP alignment, imputation, and
@@ -40,6 +41,10 @@ every model, so accuracy differences are interpretable and results are auditable
 
 *Scope: sequencing (FASTQ → VCF) is upstream / out of scope; BreedAI starts at
 genotypes.*
+
+*Future work (not in this proof of concept): pedigree-based single-step
+(H-matrix / ssGBLUP), multi-trait prediction, and additional species (sheep,
+goats, camels, horses).*
 
 ---
 
@@ -55,6 +60,11 @@ Fixed effects: intercept-only (proof of concept).
 | Best single model (penalized linear) | 0.911 | up to 0.956 |
 | Best ensemble (stacking, non-neg. ridge) | **0.912** | up to **0.957** |
 | Gain over GBLUP | **+3.0 %** | — |
+
+> "Default GBLUP" here is **RR-BLUP** — ridge regression on the marker matrix with the
+> penalty chosen by 5-fold cross-validation (`GBLUP_RidgeCV`). This is equivalent in
+> family to GBLUP, but the shrinkage is CV-selected rather than derived from REML
+> variance components (heritability) as in classical mixed-model GBLUP.
 
 Penalized linear models and stacking outperform the default GBLUP on moderately
 polygenic traits; tree-based and neural methods underperform here — exactly the
@@ -81,7 +91,7 @@ conda activate genomic_pred
 # 3. Provide your data — drop two files into input/ (matched by animal ID):
 #      input/Geno.csv     animals × SNPs, coded 0/1/2
 #      input/Pheno.csv    animals × traits
-#    Optional: input/metadata.csv (covariates), input/pedigree.csv (ssGBLUP)
+#    Optional: input/metadata.csv (fixed-effect covariates)
 
 # 4. Run the fair benchmark (default GBLUP + 18-model R&D track, same splits),
 #    locally or on SLURM/HPC via the interactive menu:
