@@ -1,0 +1,21 @@
+# OPTIONAL environment — only for the Bayesian methods (BayesA / BayesB / BayesCpi),
+# which use R and the BGLR package.
+#
+# You do NOT need this for the default GBLUP track or the 15 Python R&D models —
+# they run from environment.yml alone. Install this only if you want the Bayesian
+# alphabet models. If it fails to solve on your platform, nothing else is affected;
+# BreedAI simply skips those three methods.
+#
+# Usage:
+#   conda env create -f environment-r.yml
+#   export BGLR_RSCRIPT="$(conda run -n breedai_r which Rscript)"   # point BreedAI at this R
+#   conda run -n breedai_r Rscript -e 'library(BGLR); cat("BGLR OK\n")'   # verify
+#
+# Fallback if conda can't resolve r-bglr: drop it below (keep only r-base), then
+#   conda run -n breedai_r Rscript -e 'install.packages("BGLR", repos="https://cloud.r-project.org")'
+name: breedai_r
+channels:
+  - conda-forge
+dependencies:
+  - r-base
+  - r-bglr

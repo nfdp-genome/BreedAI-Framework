@@ -99,8 +99,8 @@ set -euo pipefail
 
 cd "${SCRIPT_DIR}"
 
-module purge
-module load R
+module purge 2>/dev/null || true
+module load R 2>/dev/null || true
 CONDA_BASE_PATH="$(conda info --base 2>/dev/null)"
 if [ -f "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh" ]; then
   source "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh"

@@ -2,9 +2,55 @@
 
 ## Prerequisites
 
-- Access to an HPC cluster with a SLURM scheduler
-- Conda environment `genomic_pred` (`conda env create -f environment.yml`)
+- Conda (or pip) to create the environment
+- For SLURM/HPC runs: access to a cluster with a SLURM scheduler (the pipeline can
+  also run locally via the menu's "Local" option)
 - This repository cloned into your project directory
+
+---
+
+## Installation
+
+### 1. Core environment (required)
+
+```bash
+cd /path/to/BreedAI-Framework          # the cloned repo
+conda env create -f environment.yml    # creates the `genomic_pred` env
+conda activate genomic_pred
+# …or, without conda:  pip install -r requirements.txt
+```
+
+This is everything you need for the **default GBLUP track** and the **15 Python
+R&D models** (penalized linear, tree/boosting, kernel/GP, neural) plus ensembles.
+
+### 2. R + BGLR (optional — Bayesian methods only)
+
+The Bayesian alphabet models — **BayesA / BayesB / BayesCpi** — are the *only* part
+of BreedAI that needs R (via the **BGLR** package). Everything else runs without R.
+If R/BGLR isn't available, BreedAI **skips those three methods and the run still
+completes** — it never blocks the pipeline.
+
+To enable them, create the separate optional R environment and point BreedAI at it:
+
+```bash
+conda env create -f environment-r.yml                          # creates `breedai_r` (R + BGLR)
+export BGLR_RSCRIPT="$(conda run -n breedai_r which Rscript)"   # tell BreedAI which R to use
+conda run -n breedai_r Rscript -e 'library(BGLR); cat("BGLR OK\n")'   # verify
+```
+
+`BGLR_RSCRIPT` can point at **any** R that has BGLR — a conda env, or a module /
+system R (on an HPC: `module load R` then `export BGLR_RSCRIPT=$(which Rscript)`).
+
+Notes:
+- Keeping R in a **separate** env means a failed R install never blocks the core
+  pipeline — you only lose the three Bayesian methods.
+- The probe that detects BGLR is time-bounded (`BREEDAI_BGLR_CHECK_TIMEOUT`,
+  default 60s), and the default track skips it entirely, so a slow R can't stall a run.
+
+### 3. SLURM account (HPC only)
+
+Set your account once before submitting — see [Quick Start](#quick-start):
+`export SBATCH_ACCOUNT=<your-account>`.
 
 ---
 
@@ -227,7 +273,8 @@ Customizable when prompted by the menu. Set your account with
 | Job stuck at BayesianRidge | Normal for large datasets; check memory with `sacct -j JOBID --format=MaxRSS` |
 | `Feature mismatch` in Phase 2 | Different SNP panels are supported (aligned automatically). If overlap < 50%, prediction is rejected |
 | `No Phase 1 results found` | Run Phase 1 before Phase 2 |
-| BGLR/Rscript not found | Ensure `module load R` is in the SLURM script |
+| Bayesian methods (BayesA/B/Cpi) missing from results | Optional — they need R + BGLR. Install `environment-r.yml` and `export BGLR_RSCRIPT=$(conda run -n breedai_r which Rscript)` (see Installation §2). The rest of the run is unaffected. |
+| Run seems to hang right after `module load R` | A slow R was blocking the BGLR probe. It's now time-bounded (`BREEDAI_BGLR_CHECK_TIMEOUT`, default 60s); update to the latest scripts, or `export BREEDAI_SKIP_BGLR_CHECK=1` to skip R entirely. |
 
 ---
 

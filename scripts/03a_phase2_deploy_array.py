@@ -450,8 +450,8 @@ echo "=================================================================="
 USER_CONDA_ENV_PATH="genomic_pred"
 CONDA_BASE_PATH="$(conda info --base 2>/dev/null)"
 
-module purge
-module load R
+module purge 2>/dev/null || true
+module load R 2>/dev/null || true
 [ -n "${{CONDA_BASE_PATH}}" ] && [ -f "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh" ] && source "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh"
 conda activate "$USER_CONDA_ENV_PATH" || true
 
@@ -555,8 +555,8 @@ mkdir -p logs
 USER_CONDA_ENV_PATH="genomic_pred"
 CONDA_BASE_PATH="$(conda info --base 2>/dev/null)"
 
-module purge
-module load R
+module purge 2>/dev/null || true
+module load R 2>/dev/null || true
 [ -n "${{CONDA_BASE_PATH}}" ] && [ -f "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh" ] && source "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh"
 conda activate "$USER_CONDA_ENV_PATH" || true
 export LD_LIBRARY_PATH="${{CONDA_PREFIX}}/lib:${{LD_LIBRARY_PATH:-}}"
