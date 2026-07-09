@@ -101,7 +101,7 @@ cd "${SCRIPT_DIR}"
 
 module purge 2>/dev/null || true
 module load R 2>/dev/null || true
-CONDA_BASE_PATH="$(conda info --base 2>/dev/null)"
+CONDA_BASE_PATH="\${CONDA_EXE:+\$(dirname "\$(dirname "\$CONDA_EXE")")}"; [ -n "\$CONDA_BASE_PATH" ] || CONDA_BASE_PATH="\$(timeout 20 conda info --base 2>/dev/null || true)"
 if [ -f "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh" ]; then
   source "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh"
 fi

@@ -64,7 +64,7 @@ NEW_ANIMALS_FILE="${NEW_X_FILE:-$DATA_DIR/Geno.csv}"
 
 # Environment setup
 USER_CONDA_ENV_PATH="genomic_pred"
-CONDA_BASE_PATH="$(conda info --base 2>/dev/null)"
+CONDA_BASE_PATH="${CONDA_EXE:+$(dirname "$(dirname "$CONDA_EXE")")}"; [ -n "$CONDA_BASE_PATH" ] || CONDA_BASE_PATH="$(timeout 20 conda info --base 2>/dev/null || true)"
 
 module purge 2>/dev/null || true
 module load R 2>/dev/null || true
