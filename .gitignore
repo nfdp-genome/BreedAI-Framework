@@ -95,24 +95,10 @@ prediction_array/pred_results_*.pkl
 # Explicitly track CSV files (prediction results)
 !prediction_array/*.csv
 
-# Phase 2 Deployment Prediction - ignore large model and result files
-# Models are extremely large (2.6GB each) and should not be committed
-Phase2_Deployment_Prediction/deployment/models/
-Phase2_Deployment_Prediction/deployment/*.pkl
-Phase2_Deployment_Prediction/deployment/shared_data_*.pkl
-Phase2_Deployment_Prediction/prediction/*.pkl
-Phase2_Deployment_Prediction/prediction/job_*.pkl
-Phase2_Deployment_Prediction/prediction/pred_results_*.pkl
-Phase2_Deployment_Prediction/prediction/shared_data_*.pkl
-# Track CSV prediction results and notebooks
-!Phase2_Deployment_Prediction/prediction/*.csv
-!Phase2_Deployment_Prediction/notebooks/
-
-# Large generated artifacts (keep local, not in git)
-Phase1_Learning_Benchmarking/core_dataset/*.csv
-Phase1_Learning_Benchmarking/core_dataset/*.npy
-Phase1_Learning_Benchmarking/core_dataset/gmatrix/
-Phase1_Learning_Benchmarking/training_validation/default_track/gebv/*.csv
+# Generated pipeline outputs — created at runtime, keep local (never tracked)
+Phase1_Learning_Benchmarking/
+Phase2_Deployment_Prediction/
+notebooks/
 *.npy
 *.npz
 *.vcf
