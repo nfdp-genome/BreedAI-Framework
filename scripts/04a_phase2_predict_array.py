@@ -211,7 +211,9 @@ class PredictionArrayManager:
     
     def generate_slurm_prediction_array_script(self, n_jobs, job_name='genomic_prediction'):
         """Generate SLURM prediction array script"""
-        
+        # SBATCH directives are parsed before the script runs, so $PROJECT_DIR is NOT
+        # expanded there — write an absolute logs path instead.
+        logs_dir = Path(self.output_dir).parent.parent / 'logs' / 'prediction'
         script_content = f"""#!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --array=0-{n_jobs-1}
@@ -219,8 +221,8 @@ class PredictionArrayManager:
 #SBATCH --mem=12G
 #SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
-#SBATCH --output=$PROJECT_DIR/logs/prediction/{job_name}_%A_%a.out
-#SBATCH --error=$PROJECT_DIR/logs/prediction/{job_name}_%A_%a.err
+#SBATCH --output={logs_dir}/{job_name}_%A_%a.out
+#SBATCH --error={logs_dir}/{job_name}_%A_%a.err
 
 mkdir -p logs
 
@@ -301,6 +303,7 @@ echo "=================================================================="
         
         # Extract output_dir to avoid f-string nesting issues
         output_dir_str = str(self.output_dir)
+        logs_dir_str = str(Path(self.output_dir).parent.parent / 'logs' / 'prediction')
         
         # Use .format() instead of f-string to avoid nesting issues with triple quotes
         script_content = """#!/bin/bash
@@ -309,8 +312,8 @@ echo "=================================================================="
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --output=$PROJECT_DIR/logs/prediction/{job_name}_%j.out
-#SBATCH --error=$PROJECT_DIR/logs/prediction/{job_name}_%j.err
+#SBATCH --output={logs_dir}/{job_name}_%j.out
+#SBATCH --error={logs_dir}/{job_name}_%j.err
 
 mkdir -p logs
 
@@ -455,7 +458,8 @@ echo "Prediction combination completed"
 """.format(
             job_name=job_name,
             n_jobs=n_jobs,
-            output_dir_str=output_dir_str
+            output_dir_str=output_dir_str,
+            logs_dir=logs_dir_str
         )
         
         script_path = self.output_dir / f"{job_name}.sh"
