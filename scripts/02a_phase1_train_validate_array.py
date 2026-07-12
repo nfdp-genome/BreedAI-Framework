@@ -483,6 +483,8 @@ class ArrayJobManager:
     def generate_slurm_array_script(self, n_jobs, job_name='genomic_train_validate', extra_cli_args=""):
         """Generate SLURM array job script"""
         
+        # SBATCH directives don't expand $PROJECT_DIR — use an absolute logs path.
+        logs_dir = Path(self.output_dir).parent.parent / 'logs' / 'train_validate'
         script_content = f"""#!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --array=0-{n_jobs-1}
@@ -490,8 +492,8 @@ class ArrayJobManager:
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=32
 #SBATCH --partition=batch
-#SBATCH --output=$PROJECT_DIR/logs/train_validate/{job_name}_%A_%a.out
-#SBATCH --error=$PROJECT_DIR/logs/train_validate/{job_name}_%A_%a.err
+#SBATCH --output={logs_dir}/{job_name}_%A_%a.out
+#SBATCH --error={logs_dir}/{job_name}_%A_%a.err
 
 # Create logs directory
 mkdir -p $PROJECT_DIR/logs/train_validate
@@ -593,14 +595,15 @@ exit $JOB_EXIT_CODE
     def generate_combine_script(self, n_jobs, job_name='genomic_combine'):
         """Generate results combination script"""
         
+        logs_dir = Path(self.output_dir).parent.parent / 'logs' / 'train_validate'
         script_content = f"""#!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --time=01:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
-#SBATCH --output=$PROJECT_DIR/logs/train_validate/{job_name}_%j.out
-#SBATCH --error=$PROJECT_DIR/logs/train_validate/{job_name}_%j.err
+#SBATCH --output={logs_dir}/{job_name}_%j.out
+#SBATCH --error={logs_dir}/{job_name}_%j.err
 
 echo "=================================================================="
 echo "GENOMIC TRAIN-VALIDATE RESULTS COMBINATION"
