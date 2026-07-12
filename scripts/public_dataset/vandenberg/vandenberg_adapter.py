@@ -28,8 +28,8 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-RAW_DIR = PROJECT_ROOT / "dataset" / "public_datasets" / "cattle" / "raw" / "vandenberg"
-PROCESSED_DIR = PROJECT_ROOT / "dataset" / "public_datasets" / "cattle" / "processed" / "vandenberg_QTL300_rg8"
+RAW_DIR = PROJECT_ROOT / "cattle_dataset" / "raw" / "vandenberg"
+PROCESSED_DIR = PROJECT_ROOT / "cattle_dataset" / "processed" / "vandenberg_QTL300_rg8"
 
 
 def detect_layout() -> dict:

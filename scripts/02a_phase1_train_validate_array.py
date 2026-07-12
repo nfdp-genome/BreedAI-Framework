@@ -2019,7 +2019,7 @@ def main():
                 notebooks_dir.mkdir(parents=True, exist_ok=True)
                 
                 # Find dataset directory
-                dataset_dir = project_root / 'dataset' / 'input'
+                dataset_dir = project_root / 'input'
                 if not dataset_dir.exists():
                     dataset_dir = project_root / 'data'
                 

@@ -912,7 +912,7 @@ class GenomicPredictionArray:
         # This mirrors deployment behavior and supports files with different SNP panels.
         models_dir_path = Path(models_dir)
         project_root = models_dir_path.parent.parent.parent
-        training_geno_file = project_root / 'dataset' / 'input' / 'Geno.csv'
+        training_geno_file = project_root / 'input' / 'Geno.csv'
         training_snp_names = None
 
         if training_geno_file.exists():
@@ -1456,7 +1456,7 @@ def main():
                 notebooks_dir.mkdir(parents=True, exist_ok=True)
                 
                 # Find dataset directory
-                dataset_dir = project_root / 'dataset' / 'input'
+                dataset_dir = project_root / 'input'
                 if not dataset_dir.exists():
                     dataset_dir = project_root / 'data'
                 
@@ -1510,7 +1510,7 @@ def main():
                 print("   You can generate it manually using:")
                 project_root = Path(args.output_dir).parent.parent
                 notebooks_dir = project_root / 'notebooks' / 'Phase2_Deployment_Prediction'
-                dataset_dir = project_root / 'dataset' / 'input' if (project_root / 'dataset' / 'input').exists() else project_root / 'data'
+                dataset_dir = project_root / 'input' if (project_root / 'input').exists() else project_root / 'data'
                 deployment_dir = project_root / 'Phase2_Deployment_Prediction' / 'deployment'
                 print(f"   python3 {scripts_dir}/04b_phase2_report_preprocessing.py --dataset_dir {dataset_dir} --deployment_dir {deployment_dir} --output_file {notebooks_dir / '2.1_Preprocessing_report.ipynb'}")
         else:

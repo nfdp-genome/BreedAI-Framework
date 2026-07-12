@@ -423,7 +423,7 @@ class TrainingArrayManager:
             # output_dir is typically .../Phase2_Deployment_Prediction/deployment
             # Go up to find project root
             output_path = Path(self.output_dir)
-            project_dir = output_path.parent.parent.parent  # Go up 3 levels
+            project_dir = output_path.parent.parent  # deployment -> Phase2_Deployment_Prediction -> repo root
         
         project_dir = Path(project_dir).resolve()
         logs_dir = project_dir / 'logs' / 'deployment'
@@ -1110,7 +1110,7 @@ class GenomicTrainingArray:
         training_mask_file = Path(self.output_dir).parent.parent / 'Phase1_Learning_Benchmarking' / 'training_validation' / 'variance_filter_mask.npy'
         
         # Load training genotype columns to know expected SNP names
-        training_geno_file = Path(self.output_dir).parent.parent / 'dataset' / 'input' / 'Geno.csv'
+        training_geno_file = Path(self.output_dir).parent.parent / 'input' / 'Geno.csv'
         training_snp_names = None
         if training_geno_file.exists():
             training_snp_names = list(pd.read_csv(training_geno_file, index_col=0, nrows=0).columns)
@@ -1305,7 +1305,7 @@ def main():
         # Generate SLURM scripts
         # Get project directory from output_dir
         output_path = Path(args.output_dir)
-        project_dir = output_path.parent.parent.parent  # Go up from deployment to project root
+        project_dir = output_path.parent.parent  # deployment -> Phase2_Deployment_Prediction -> repo root
         training_script = array_manager.generate_slurm_training_array_script(n_jobs, project_dir=project_dir)
         combine_script = array_manager.generate_combine_models_script(n_jobs)
         
