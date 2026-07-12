@@ -106,7 +106,8 @@ if [ -f "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh" ]; then
   source "\${CONDA_BASE_PATH}/etc/profile.d/conda.sh"
 fi
 
-conda activate "${DEFAULT_CONDA_ENV}" || true
+_ep=\$(CONDA_BASE_PATH="\$CONDA_BASE_PATH" ENVNAME="${DEFAULT_CONDA_ENV}" timeout 45 bash -c 'source "\$CONDA_BASE_PATH/etc/profile.d/conda.sh" 2>/dev/null; conda activate "\$ENVNAME" >/dev/null 2>&1; printf %s "\$CONDA_PREFIX"' 2>/dev/null || true)
+if [ -n "\$_ep" ] && [ -x "\$_ep/bin/python" ]; then export CONDA_PREFIX="\$_ep"; export PATH="\$_ep/bin:\$PATH"; export CONDA_DEFAULT_ENV="${DEFAULT_CONDA_ENV}"; fi
 
 export NEW_X_FILE="${NEW_X_FILE:-}"
 export BREEDAI_REQUIRE_ALL_ALGOS=0

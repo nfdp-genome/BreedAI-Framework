@@ -511,7 +511,8 @@ CONDA_BASE_PATH="${{CONDA_EXE:+$(dirname "$(dirname "$CONDA_EXE")")}}"; [ -n "$C
 module purge 2>/dev/null || true
 module load R 2>/dev/null || true
 [ -n "${{CONDA_BASE_PATH}}" ] && [ -f "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh" ] && source "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh"
-conda activate "$USER_CONDA_ENV_PATH" || true
+_ep=$(CONDA_BASE_PATH="$CONDA_BASE_PATH" ENVNAME="$USER_CONDA_ENV_PATH" timeout 45 bash -c 'source "$CONDA_BASE_PATH/etc/profile.d/conda.sh" 2>/dev/null; conda activate "$ENVNAME" >/dev/null 2>&1; printf %s "$CONDA_PREFIX"' 2>/dev/null || true)
+if [ -n "$_ep" ] && [ -x "$_ep/bin/python" ]; then export CONDA_PREFIX="$_ep"; export PATH="$_ep/bin:$PATH"; export CONDA_DEFAULT_ENV="$USER_CONDA_ENV_PATH"; fi
 
 # Fix for CXXABI error
 export LD_LIBRARY_PATH="${{CONDA_PREFIX}}/lib:${{LD_LIBRARY_PATH:-}}"
@@ -616,7 +617,8 @@ CONDA_BASE_PATH="${{CONDA_EXE:+$(dirname "$(dirname "$CONDA_EXE")")}}"; [ -n "$C
 module purge 2>/dev/null || true
 module load R 2>/dev/null || true
 [ -n "${{CONDA_BASE_PATH}}" ] && [ -f "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh" ] && source "${{CONDA_BASE_PATH}}/etc/profile.d/conda.sh"
-conda activate "$USER_CONDA_ENV_PATH" || true
+_ep=$(CONDA_BASE_PATH="$CONDA_BASE_PATH" ENVNAME="$USER_CONDA_ENV_PATH" timeout 45 bash -c 'source "$CONDA_BASE_PATH/etc/profile.d/conda.sh" 2>/dev/null; conda activate "$ENVNAME" >/dev/null 2>&1; printf %s "$CONDA_PREFIX"' 2>/dev/null || true)
+if [ -n "$_ep" ] && [ -x "$_ep/bin/python" ]; then export CONDA_PREFIX="$_ep"; export PATH="$_ep/bin:$PATH"; export CONDA_DEFAULT_ENV="$USER_CONDA_ENV_PATH"; fi
 export LD_LIBRARY_PATH="${{CONDA_PREFIX}}/lib:${{LD_LIBRARY_PATH:-}}"
 
 if [ -z "$CONDA_PREFIX" ] || ( [ "$CONDA_PREFIX" != "$USER_CONDA_ENV_PATH" ] && [ "$(basename "$CONDA_PREFIX")" != "$(basename "$USER_CONDA_ENV_PATH")" ] ); then
