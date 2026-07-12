@@ -1254,6 +1254,22 @@ class GenomicTrainingArray:
         
         # Create training jobs - ONE PER TRAIT
         algorithms = self.get_algorithms()
+        # Deploy only the algorithms Phase 1 actually benchmarked (e.g. the default
+        # track = GBLUP only). Without this, deployment retrains all 18 models even
+        # for a GBLUP-only run — slow and inconsistent with what was benchmarked.
+        if benchmark_results:
+            try:
+                _bench = pd.read_csv(benchmark_results)
+                _wanted = set(_bench['algorithm'].astype(str).unique()) if 'algorithm' in _bench.columns else set()
+                _keep = {k: v for k, v in algorithms.items() if k in _wanted}
+                if _keep:
+                    algorithms = _keep
+                    self.logger.info("Deploying %d benchmarked algorithm(s): %s",
+                                     len(algorithms), sorted(algorithms))
+                else:
+                    self.logger.warning("No benchmarked algorithms matched; deploying all")
+            except Exception as e:
+                self.logger.warning("Could not read benchmark_results (%s); deploying all", e)
         array_manager = TrainingArrayManager(self.output_dir)
         jobs = array_manager.create_trait_training_jobs(trait_names, algorithms)
         
