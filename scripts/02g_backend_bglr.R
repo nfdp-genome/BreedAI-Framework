@@ -28,10 +28,14 @@ suppressMessages(library(BGLR))
 
 # #region agent log
 debug_log <- function(hypothesis_id, location, message, data_json) {
+  # Optional debug trace. Only writes when BREEDAI_DEBUG_LOG points at a real file;
+  # wrapped in try() so debug logging can never break the actual BGLR run.
+  target <- Sys.getenv("BREEDAI_DEBUG_LOG", unset = "")
+  if (!nzchar(target)) return(invisible(NULL))
   ts <- as.integer(as.numeric(Sys.time()) * 1000)
   line <- sprintf('{"sessionId":"debug-session","runId":"post-fix","hypothesisId":"%s","location":"%s","message":"%s","data":%s,"timestamp":%d}\n',
                   hypothesis_id, location, message, data_json, ts)
-  cat(line, file="${BREEDAI_DEBUG_LOG:-/dev/null}", append=TRUE)
+  try(cat(line, file = target, append = TRUE), silent = TRUE)
 }
 # #endregion agent log
 
@@ -50,11 +54,16 @@ debug_log(
 
 set.seed(seed)
 
+# BGLR writes scratch files (ETA_*.dat, mu.dat, varE.dat). Direct them to the unique
+# per-run temp dir (dirname of the output path) so parallel array tasks don't collide
+# on shared filenames and the current directory need not be writable.
+saveAt <- file.path(dirname(b_path), "bglr_")
+
 ETA <- list(list(X = X, model = method))
 fit <- NULL
 fit <- tryCatch(
   {
-    BGLR(y = y, ETA = ETA, nIter = n_iter, burnIn = burn_in, verbose = FALSE)
+    BGLR(y = y, ETA = ETA, nIter = n_iter, burnIn = burn_in, verbose = FALSE, saveAt = saveAt)
   },
   error = function(e) {
     if (identical(method, "BayesCpi")) {
@@ -67,7 +76,7 @@ fit <- tryCatch(
       )
       # #endregion agent log
       ETA2 <- list(list(X = X, model = "BayesC", probIn = 0.5))
-      return(BGLR(y = y, ETA = ETA2, nIter = n_iter, burnIn = burn_in, verbose = FALSE))
+      return(BGLR(y = y, ETA = ETA2, nIter = n_iter, burnIn = burn_in, verbose = FALSE, saveAt = saveAt))
     }
     stop(e)
   }
