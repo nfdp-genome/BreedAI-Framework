@@ -24,6 +24,7 @@ from pathlib import Path
 from datetime import datetime
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.metrics import r2_score
 from sklearn.pipeline import Pipeline
 
@@ -161,7 +162,8 @@ class GPflowRegressor:
     """GPflow wrapper for deployment training."""
     
     def __init__(self, kernel_type='rbf', max_iter=300, lengthscale=1.0,
-                 variance=1.0, noise_variance=0.1, use_sparse=True, n_inducing=50):
+                 variance=1.0, noise_variance=0.1, use_sparse=True, n_inducing=50,
+                 n_components=100):
         self.kernel_type = kernel_type
         self.max_iter = max_iter
         self.lengthscale = lengthscale
@@ -169,35 +171,49 @@ class GPflowRegressor:
         self.noise_variance = noise_variance
         self.use_sparse = use_sparse
         self.n_inducing = n_inducing
+        # An isotropic RBF/Matern GP collapses on raw high-dimensional SNP matrices:
+        # the marginal likelihood drives the kernel variance to ~0, the posterior mean
+        # becomes a constant, and the test correlation is nan. Project onto the leading
+        # principal components so the GP works in a tractable, signal-bearing space.
+        self.n_components = n_components
         self.model = None
+        self.pca = None
         self.scaler_X = StandardScaler()
+        self.scaler_pca = StandardScaler()
         self.scaler_y = StandardScaler()
-    
-    def _create_kernel(self):
+
+    def _create_kernel(self, input_dim):
+        # Initialise the lengthscale relative to the (reduced) dimensionality so the
+        # kernel starts in a well-conditioned regime rather than saturated.
+        ls = float(np.sqrt(max(input_dim, 1)))
         if self.kernel_type == 'rbf':
-            return gpflow.kernels.RBF(lengthscales=self.lengthscale, variance=self.variance)
+            return gpflow.kernels.RBF(lengthscales=ls, variance=self.variance)
         if self.kernel_type == 'matern52':
-            return gpflow.kernels.Matern52(lengthscales=self.lengthscale, variance=self.variance)
+            return gpflow.kernels.Matern52(lengthscales=ls, variance=self.variance)
         if self.kernel_type == 'linear':
             return gpflow.kernels.Linear(variance=self.variance)
-        return gpflow.kernels.RBF(lengthscales=self.lengthscale, variance=self.variance)
-    
+        return gpflow.kernels.RBF(lengthscales=ls, variance=self.variance)
+
     def fit(self, X, y):
         if not GPFLOW_AVAILABLE:
             raise ImportError("GPflow not available")
-        
+
         X_scaled = self.scaler_X.fit_transform(X)
+        # Reduce to the leading principal components before the GP kernel (see __init__).
+        n_comp = min(self.n_components, X_scaled.shape[0] - 1, X_scaled.shape[1])
+        self.pca = PCA(n_components=n_comp, random_state=42)
+        X_red = self.scaler_pca.fit_transform(self.pca.fit_transform(X_scaled))
         y_scaled = self.scaler_y.fit_transform(y.reshape(-1, 1)).flatten()
-        
-        X_tensor = tf.constant(X_scaled, dtype=tf.float64)
+
+        X_tensor = tf.constant(X_red, dtype=tf.float64)
         y_tensor = tf.constant(y_scaled.reshape(-1, 1), dtype=tf.float64)
-        
-        kernel = self._create_kernel()
-        
-        if self.use_sparse and len(X) > 500:
-            n_inducing = min(self.n_inducing, len(X) // 2)
-            indices = np.random.choice(len(X), n_inducing, replace=False)
-            inducing_points = X_scaled[indices]
+
+        kernel = self._create_kernel(X_red.shape[1])
+
+        if self.use_sparse and len(X_red) > 500:
+            n_inducing = min(self.n_inducing, len(X_red) // 2)
+            indices = np.random.choice(len(X_red), n_inducing, replace=False)
+            inducing_points = X_red[indices]
             self.model = gpflow.models.SGPR(
                 data=(X_tensor, y_tensor),
                 kernel=kernel,
@@ -209,7 +225,7 @@ class GPflowRegressor:
                 kernel=kernel,
                 noise_variance=self.noise_variance
             )
-        
+
         optimizer = gpflow.optimizers.Scipy()
         try:
             optimizer.minimize(
@@ -219,15 +235,16 @@ class GPflowRegressor:
             )
         except Exception:
             pass
-        
+
         return self
-    
+
     def predict(self, X):
         if self.model is None:
             raise ValueError("Model must be fitted before making predictions")
-        
+
         X_scaled = self.scaler_X.transform(X)
-        X_tensor = tf.constant(X_scaled, dtype=tf.float64)
+        X_red = self.scaler_pca.transform(self.pca.transform(X_scaled))
+        X_tensor = tf.constant(X_red, dtype=tf.float64)
         mean, _ = self.model.predict_f(X_tensor)
         mean_np = mean.numpy().flatten()
         return self.scaler_y.inverse_transform(mean_np.reshape(-1, 1)).flatten()
