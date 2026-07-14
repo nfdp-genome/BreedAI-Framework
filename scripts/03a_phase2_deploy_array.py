@@ -357,11 +357,17 @@ class TrainingArrayManager:
             ckpt = tf.train.Checkpoint(model=regressor.model)
             manager = tf.train.CheckpointManager(ckpt, str(ckpt_dir), max_to_keep=1)
             manager.save()
+            # The GP is trained in PCA-reduced space (see GPflowRegressor). Persist the
+            # PCA + its scaler alongside the input scalers, and record the reduced
+            # dimensionality, so the prediction side can rebuild the model correctly.
             joblib.dump(
-                {'scaler_X': regressor.scaler_X, 'scaler_y': regressor.scaler_y},
+                {'scaler_X': regressor.scaler_X, 'scaler_y': regressor.scaler_y,
+                 'pca': getattr(regressor, 'pca', None),
+                 'scaler_pca': getattr(regressor, 'scaler_pca', None)},
                 trait_dir / f"{alg_name}_scalers.joblib"
             )
             n_features = getattr(regressor.scaler_X, 'n_features_in_', None) or (regressor.scaler_X.mean_.shape[0] if hasattr(regressor.scaler_X, 'mean_') and regressor.scaler_X.mean_ is not None else None)
+            n_components = getattr(getattr(regressor, 'pca', None), 'n_components_', None)
             meta = {
                 'type': 'gpflow_ckpt',
                 'kernel_type': getattr(regressor, 'kernel_type', 'rbf'),
@@ -369,6 +375,7 @@ class TrainingArrayManager:
                 'n_inducing': getattr(regressor, 'n_inducing', 50),
                 'noise_variance': getattr(regressor, 'noise_variance', 0.1),
                 'n_features': n_features,
+                'n_components': int(n_components) if n_components is not None else None,
             }
             with open(trait_dir / f"{alg_name}_meta.json", 'w') as f:
                 json.dump(meta, f, indent=2)

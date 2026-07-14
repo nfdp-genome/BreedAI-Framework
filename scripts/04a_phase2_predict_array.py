@@ -660,12 +660,22 @@ class GenomicPredictionArray:
             scalers = joblib.load(scalers_file)
             scaler_X = scalers['scaler_X']
             scaler_y = scalers['scaler_y']
+            pca = scalers.get('pca') if isinstance(scalers, dict) else None
+            scaler_pca = scalers.get('scaler_pca') if isinstance(scalers, dict) else None
             n_features = meta.get('n_features') or getattr(scaler_X, 'n_features_in_', None)
             if n_features is None and hasattr(scaler_X, 'mean_') and scaler_X.mean_ is not None:
                 n_features = scaler_X.mean_.shape[0]
             if n_features is None:
                 self.logger.error(f"GPflow checkpoint: could not determine n_features for {alg_name}")
                 return None
+            # The GP was trained in PCA-reduced space, so the checkpointed model's
+            # inducing points / kernel live in that reduced dimensionality. Rebuild on
+            # n_components (fall back to n_features for legacy non-PCA checkpoints).
+            model_dim = meta.get('n_components')
+            if model_dim is None and pca is not None:
+                model_dim = getattr(pca, 'n_components_', None)
+            if model_dim is None:
+                model_dim = n_features
             kernel_type = meta.get('kernel_type', 'rbf')
             use_sparse = meta.get('use_sparse', True)
             n_inducing = meta.get('n_inducing', 50)
@@ -676,13 +686,13 @@ class GenomicPredictionArray:
                 kernel = gpflow.kernels.Matern52(lengthscales=1.0, variance=1.0)
             else:
                 kernel = gpflow.kernels.RBF(lengthscales=1.0, variance=1.0)
-            X_dummy = np.zeros((1, n_features), dtype=np.float64)
+            X_dummy = np.zeros((1, model_dim), dtype=np.float64)
             Y_dummy = np.zeros((1, 1), dtype=np.float64)
             X_tensor = tf.constant(X_dummy, dtype=tf.float64)
             Y_tensor = tf.constant(Y_dummy, dtype=tf.float64)
             if use_sparse:
                 n_inducing = min(max(1, n_inducing), 1000)
-                inducing = np.zeros((n_inducing, n_features), dtype=np.float64)
+                inducing = np.zeros((n_inducing, model_dim), dtype=np.float64)
                 gp_model = gpflow.models.SGPR(
                     data=(X_tensor, Y_tensor),
                     kernel=kernel,
@@ -701,17 +711,24 @@ class GenomicPredictionArray:
                 return None
             ckpt.restore(latest)
             class _GPflowPredictor:
-                def __init__(self, model, sx, sy):
+                def __init__(self, model, sx, sy, pca=None, spca=None):
                     self.model = model
                     self.scaler_X = sx
                     self.scaler_y = sy
+                    self.pca = pca
+                    self.scaler_pca = spca
                 def predict(self, X):
                     X_scaled = self.scaler_X.transform(np.asarray(X, dtype=np.float64))
+                    # Match the training-time transform: PCA-reduce then re-standardise.
+                    if self.pca is not None:
+                        X_scaled = self.pca.transform(X_scaled)
+                        if self.scaler_pca is not None:
+                            X_scaled = self.scaler_pca.transform(X_scaled)
                     X_t = tf.constant(X_scaled, dtype=tf.float64)
                     mean, _ = self.model.predict_f(X_t)
                     mean_np = mean.numpy().flatten()
                     return self.scaler_y.inverse_transform(mean_np.reshape(-1, 1)).flatten()
-            return _GPflowPredictor(gp_model, scaler_X, scaler_y)
+            return _GPflowPredictor(gp_model, scaler_X, scaler_y, pca, scaler_pca)
         except Exception as e:
             self.logger.error(f"Failed to load GPflow checkpoint {ckpt_dir}: {e}")
             return None
