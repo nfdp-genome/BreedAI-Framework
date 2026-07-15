@@ -940,7 +940,10 @@ class GenomicPredictionArray:
             training_snp_names = list(pd.read_csv(training_geno_file, index_col=0, nrows=0).columns)
             self.logger.info(f"Loaded training SNP names: {len(training_snp_names)} from {training_geno_file}")
 
-            if X_new.shape[1] != len(training_snp_names):
+            # Compare the SNP panel itself, not just its size: an input can match the
+            # training marker count while carrying a different (or differently ordered)
+            # panel, which must still be overlap-checked and realigned.
+            if list(X_new_df.columns) != list(training_snp_names):
                 input_snps = set(X_new_df.columns)
                 training_snps = set(training_snp_names)
                 common_snps = input_snps & training_snps
