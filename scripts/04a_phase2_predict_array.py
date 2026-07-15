@@ -686,10 +686,31 @@ class GenomicPredictionArray:
                 kernel = gpflow.kernels.Matern52(lengthscales=1.0, variance=1.0)
             else:
                 kernel = gpflow.kernels.RBF(lengthscales=1.0, variance=1.0)
-            X_dummy = np.zeros((1, model_dim), dtype=np.float64)
-            Y_dummy = np.zeros((1, 1), dtype=np.float64)
-            X_tensor = tf.constant(X_dummy, dtype=tf.float64)
-            Y_tensor = tf.constant(Y_dummy, dtype=tf.float64)
+            # A GP's posterior is computed from its training data, which the checkpoint
+            # does not carry (it lives in the model as a tf.constant, not a Variable).
+            # Reload the data saved beside the checkpoint; without it the restored model
+            # returns its prior mean and every animal gets an identical prediction.
+            train_data_file = trait_dir / f"{alg_name}_train_data.npz"
+            if train_data_file.exists():
+                with np.load(train_data_file) as td:
+                    X_fit = np.asarray(td['X'], dtype=np.float64)
+                    Y_fit = np.asarray(td['y'], dtype=np.float64).reshape(-1, 1)
+                if X_fit.shape[1] != model_dim:
+                    self.logger.error(
+                        f"GP {alg_name}: saved training data has {X_fit.shape[1]} dims, "
+                        f"expected {model_dim}; refusing to predict from a mismatched model"
+                    )
+                    return None
+            else:
+                # Legacy checkpoint saved before the training data was persisted. Such a
+                # model can only return a constant, which is worse than no prediction.
+                self.logger.error(
+                    f"GP {alg_name}: no {train_data_file.name} beside the checkpoint — this "
+                    f"model predates the fix and would predict a constant. Redeploy to use it."
+                )
+                return None
+            X_tensor = tf.constant(X_fit, dtype=tf.float64)
+            Y_tensor = tf.constant(Y_fit, dtype=tf.float64)
             if use_sparse:
                 n_inducing = min(max(1, n_inducing), 1000)
                 inducing = np.zeros((n_inducing, model_dim), dtype=np.float64)

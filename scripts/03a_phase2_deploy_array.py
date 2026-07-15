@@ -357,6 +357,17 @@ class TrainingArrayManager:
             ckpt = tf.train.Checkpoint(model=regressor.model)
             manager = tf.train.CheckpointManager(ckpt, str(ckpt_dir), max_to_keep=1)
             manager.save()
+            # A GPflow GPR/SGPR derives its posterior from the training data itself, but
+            # holds it as a tf.constant rather than a tf.Variable, so the checkpoint above
+            # does NOT contain it. Restored without the data the model returns its prior
+            # mean — one identical prediction for every animal. Persist it here.
+            train_data = getattr(regressor.model, 'data', None)
+            if train_data is not None:
+                np.savez_compressed(
+                    trait_dir / f"{alg_name}_train_data.npz",
+                    X=np.asarray(train_data[0], dtype=np.float64),
+                    y=np.asarray(train_data[1], dtype=np.float64).reshape(-1, 1),
+                )
             # The GP is trained in PCA-reduced space (see GPflowRegressor). Persist the
             # PCA + its scaler alongside the input scalers, and record the reduced
             # dimensionality, so the prediction side can rebuild the model correctly.
