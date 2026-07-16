@@ -54,6 +54,21 @@ if [[ -z "$PROJECT_DIR" ]]; then
     exit 1
 fi
 
+# The #SBATCH --output/--error directives at the top of this file use ../logs, a path
+# SLURM resolves against the job's working directory before this script runs -- so they
+# cannot use $PROJECT_DIR. Submitting from anywhere but scripts/ therefore writes the
+# SLURM logs outside the repo. The run itself is unaffected, so warn rather than exit.
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    ACTUAL_LOG_DIR="$(cd "$PWD/.." && pwd)/logs"
+    if [[ "$ACTUAL_LOG_DIR" != "$PROJECT_DIR/logs" ]]; then
+        echo "⚠️  WARNING: SLURM logs for this job are being written OUTSIDE the repo:"
+        echo "      $ACTUAL_LOG_DIR"
+        echo "    Expected: $PROJECT_DIR/logs"
+        echo "    Submit from the repo with:  sbatch -D scripts/ $(basename "${BASH_SOURCE[0]}")"
+        echo "    or use the documented path: cd scripts && ./start_menu.sh"
+    fi
+fi
+
 SCRIPTS_DIR="$PROJECT_DIR/scripts"
 DATA_DIR="$PROJECT_DIR/input"
 DEPLOYMENT_ARRAY_DIR="$PROJECT_DIR/Phase2_Deployment_Prediction/deployment"
