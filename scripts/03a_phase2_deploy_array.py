@@ -163,7 +163,7 @@ class GPflowRegressor:
     
     def __init__(self, kernel_type='rbf', max_iter=300, lengthscale=1.0,
                  variance=1.0, noise_variance=0.1, use_sparse=True, n_inducing=50,
-                 n_components=100):
+                 n_components=100, random_state=42):
         self.kernel_type = kernel_type
         self.max_iter = max_iter
         self.lengthscale = lengthscale
@@ -171,6 +171,11 @@ class GPflowRegressor:
         self.noise_variance = noise_variance
         self.use_sparse = use_sparse
         self.n_inducing = n_inducing
+        # Seed the inducing-point draw (below) so the deployed sparse GP is reproducible.
+        # Without it the draw comes from the unseeded global RNG, so every deploy gets a
+        # different GP model -- Matern52 especially, whose less-smooth kernel makes the
+        # rank-n_inducing SGPR approximation highly sensitive to which points are chosen.
+        self.random_state = random_state
         # An isotropic RBF/Matern GP collapses on raw high-dimensional SNP matrices:
         # the marginal likelihood drives the kernel variance to ~0, the posterior mean
         # becomes a constant, and the test correlation is nan. Project onto the leading
@@ -212,7 +217,8 @@ class GPflowRegressor:
 
         if self.use_sparse and len(X_red) > 500:
             n_inducing = min(self.n_inducing, len(X_red) // 2)
-            indices = np.random.choice(len(X_red), n_inducing, replace=False)
+            rng = np.random.RandomState(self.random_state)
+            indices = rng.choice(len(X_red), n_inducing, replace=False)
             inducing_points = X_red[indices]
             self.model = gpflow.models.SGPR(
                 data=(X_tensor, y_tensor),
@@ -987,8 +993,8 @@ class GenomicTrainingArray:
         
         if GPFLOW_AVAILABLE:
             algorithms.update({
-                'GP_RBF': GPflowRegressor(kernel_type='rbf', max_iter=300, use_sparse=True, n_inducing=50),
-                'GP_Matern52': GPflowRegressor(kernel_type='matern52', max_iter=300, use_sparse=True, n_inducing=50),
+                'GP_RBF': GPflowRegressor(kernel_type='rbf', max_iter=300, use_sparse=True, n_inducing=50, random_state=self.random_state),
+                'GP_Matern52': GPflowRegressor(kernel_type='matern52', max_iter=300, use_sparse=True, n_inducing=50, random_state=self.random_state),
             })
             self.logger.info("Added Gaussian Process algorithms")
 
